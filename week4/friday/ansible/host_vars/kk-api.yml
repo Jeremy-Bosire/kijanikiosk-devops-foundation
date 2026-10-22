@@ -1,0 +1,23 @@
+---
+kk_service:
+  name: kk-api
+  description: KijaniKiosk API Service
+  env_file: api.env
+  port: 3000
+  hardening: standard        # front door: hardened, but not the payments-grade profile
+  expose_to_admin: true      # reachable from admin networks (stands in for the load balancer)
+  allowed_peers: []          # other inventory hosts allowed to reach the port
+  memory_max: 256M
+  tasks_max: 64
+  env:
+    KK_API_UPSTREAM_PAYMENTS_PORT: "3001"
+    KK_API_RATE_LIMIT_PER_MIN: "600"
+
+# Week 3: nginx installed and held so an unattended upgrade cannot change it.
+extra_packages:
+  - nginx
+held_packages:
+  - nginx
+open_http: true              # Week 3 opened 80/tcp; only the API server serves HTTP now
+
+journal_system_max_use: 500M

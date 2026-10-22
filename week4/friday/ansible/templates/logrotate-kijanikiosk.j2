@@ -1,0 +1,16 @@
+# {{ ansible_managed }}
+{{ kk_shared_logs_dir }}/*.log {
+    {{ logrotate_frequency }}
+    rotate {{ logrotate_rotate }}
+    maxsize {{ logrotate_maxsize }}
+    missingok
+    notifempty
+    compress
+    delaycompress
+    # The service keeps its log file open; truncate in place instead of
+    # moving it, so no restart is needed after rotation (Week 3 restarted kk-logs).
+    copytruncate
+    # The directory is group-writable (kijanikiosk), so rotate as the service
+    # account rather than root.
+    su {{ kk_service.name }} {{ kk_group }}
+}

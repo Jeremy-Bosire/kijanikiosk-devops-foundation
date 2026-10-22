@@ -1,0 +1,23 @@
+---
+kk_service:
+  name: kk-payments
+  description: KijaniKiosk Payments Service
+  env_file: payments-api.env   # Week 3 name; Integration Challenge D path
+  port: 3001
+  hardening: strict            # must score < 2.5 on systemd-analyze security
+  expose_to_admin: false       # only the API server may call payments
+  allowed_peers:
+    - kk-api
+  memory_max: 256M
+  tasks_max: 32
+  env:
+    KK_PAYMENTS_PROVIDER: mpesa-daraja-sandbox
+    KK_PAYMENTS_CALLBACK_PATH: /payments/callback
+    KK_PAYMENTS_TIMEOUT_SECONDS: "30"
+
+extra_packages:
+  - sqlite3
+held_packages: []
+open_http: false
+
+journal_system_max_use: 500M

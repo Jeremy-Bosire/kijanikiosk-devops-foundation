@@ -1,0 +1,39 @@
+---
+- name: Install application code (static file, no variables -> copy)
+  ansible.builtin.copy:
+    src: kk_app.py
+    dest: "{{ kk_app_dir }}/kk_app.py"
+    owner: root
+    group: "{{ kk_group }}"
+    mode: "0640"
+  notify: Restart kk service
+
+- name: Render service environment file (Week 3 mode 0640 root:kijanikiosk)
+  ansible.builtin.template:
+    src: kk-service.env.j2
+    dest: "{{ kk_env_file }}"
+    owner: root
+    group: "{{ kk_group }}"
+    mode: "0640"
+  notify: Restart kk service
+
+- name: Render hardened systemd unit
+  ansible.builtin.template:
+    src: kk-service.service.j2
+    dest: "/etc/systemd/system/{{ kk_service.name }}.service"
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Reload systemd
+    - Restart kk service
+
+# Make sure systemd has read a new or changed unit before we enable it.
+- name: Apply unit changes now
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable and start the service
+  ansible.builtin.systemd_service:
+    name: "{{ kk_service.name }}"
+    enabled: true
+    state: started

@@ -1,0 +1,9 @@
+---
+- name: Configure log rotation for the service log directory
+  ansible.builtin.template:
+    src: logrotate-kijanikiosk.j2
+    dest: /etc/logrotate.d/kijanikiosk
+    owner: root
+    group: root
+    mode: "0644"
+    validate: /usr/sbin/logrotate --debug %s

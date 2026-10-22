@@ -1,0 +1,250 @@
+
+==================== [2026-10-22T12:18:09+0300] Stage 0: preflight (destroy) ====================
+[2026-10-22T12:18:09+0300] MinIO state backend reachable
+[2026-10-22T12:18:09+0300] Tool versions:
+Terraform v1.16.5
+multipass   1.17.0
+
+==================== [2026-10-22T12:18:14+0300] Destroy ====================
+module.app_server["logs"].local_file.cloud_init: Refreshing state... [id=a9c06c2ad9f970b854fb3c5e140d6aa1603d1711]
+module.app_server["api"].local_file.cloud_init: Refreshing state... [id=9e7cd8f71f5f21de9da78e67ba6ec244b5a428b6]
+module.app_server["payments"].local_file.cloud_init: Refreshing state... [id=b732aa8a43b7c60d260ab481f48ef4fe656659c7]
+module.app_server["payments"].multipass_instance.this: Refreshing state... [name=kijanikiosk-payments]
+module.app_server["api"].multipass_instance.this: Refreshing state... [name=kijanikiosk-api]
+module.app_server["logs"].multipass_instance.this: Refreshing state... [name=kijanikiosk-logs]
+module.app_server["logs"].data.multipass_instance.this: Reading...
+module.app_server["api"].data.multipass_instance.this: Reading...
+module.app_server["payments"].data.multipass_instance.this: Reading...
+module.app_server["payments"].data.multipass_instance.this: Read complete after 1s [name=kijanikiosk-payments]
+module.app_server["logs"].data.multipass_instance.this: Read complete after 1s [name=kijanikiosk-logs]
+module.app_server["api"].data.multipass_instance.this: Read complete after 1s [name=kijanikiosk-api]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # module.app_server["api"].local_file.cloud_init will be destroyed
+  - resource "local_file" "cloud_init" {
+      - content              = <<-EOT
+            #cloud-config
+            # Rendered by Terraform (module app_server). Runs once, at first boot.
+            
+            # Key pair: append our public key to the image's default user. Passwords stay off.
+            ssh_authorized_keys:
+              - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMoUuHOEZ5MNgJFA40ebhZi9KGGyyCdcvlbHM3R+qPSu kijanikiosk-staging
+            ssh_pwauth: false
+            disable_root: true
+            
+            write_files:
+              - path: /etc/kijanikiosk/node-labels
+                permissions: "0644"
+                content: |
+                  environment=staging
+                  instance_type=tiny
+                  managed_by=terraform
+                  region=ke-nairobi-local
+                  role=api
+            
+            # Security-group equivalent: the host firewall is closed from first boot,
+            # before Ansible ever connects. Only SSH from admin networks is allowed.
+            runcmd:
+              - [ufw, allow, from, "172.16.0.0/12", to, any, port, "22", proto, tcp]
+              - [ufw, allow, from, "192.168.0.0/16", to, any, port, "22", proto, tcp]
+              - [ufw, allow, from, "10.0.0.0/8", to, any, port, "22", proto, tcp]
+              - [ufw, default, deny, incoming]
+              - [ufw, default, allow, outgoing]
+              - [ufw, --force, enable]
+        EOT -> null
+      - content_base64sha256 = "s6FUgQ2FQoKcJWcAaEN0u9pfueu7n3WaPNQyx/HaROk=" -> null
+      - content_base64sha512 = "1W1nbnZeX/KDCfzamKmh1oqJqZtddp4FTd7mkflpGH8KsWelMbDh0NNx9cLGoxYNM0bP+djNLJe2V4BWVSUA6Q==" -> null
+      - content_md5          = "f408afb9c080557dade2b84a03de7bf9" -> null
+      - content_sha1         = "9e7cd8f71f5f21de9da78e67ba6ec244b5a428b6" -> null
+      - content_sha256       = "b3a154810d8542829c256700684374bbda5fb9ebbb9f759a3cd432c7f1da44e9" -> null
+      - content_sha512       = "d56d676e765e5ff28309fcda98a9a1d68a89a99b5d769e054ddee691f969187f0ab167a531b0e1d0d371f5c2c6a3160d3346cff9d8cd2c97b6578056552500e9" -> null
+      - directory_permission = "0777" -> null
+      - file_permission      = "0644" -> null
+      - filename             = "./.generated/kijanikiosk-api-b3a154810d85.yaml" -> null
+      - id                   = "9e7cd8f71f5f21de9da78e67ba6ec244b5a428b6" -> null
+    }
+
+  # module.app_server["api"].multipass_instance.this will be destroyed
+  - resource "multipass_instance" "this" {
+      - cloudinit_file = "./.generated/kijanikiosk-api-b3a154810d85.yaml" -> null
+      - cpus           = 1 -> null
+      - disk           = "5G" -> null
+      - image          = "22.04" -> null
+      - ipv4           = "10.25.44.210" -> null
+      - memory         = "512M" -> null
+      - name           = "kijanikiosk-api" -> null
+    }
+
+  # module.app_server["logs"].local_file.cloud_init will be destroyed
+  - resource "local_file" "cloud_init" {
+      - content              = <<-EOT
+            #cloud-config
+            # Rendered by Terraform (module app_server). Runs once, at first boot.
+            
+            # Key pair: append our public key to the image's default user. Passwords stay off.
+            ssh_authorized_keys:
+              - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMoUuHOEZ5MNgJFA40ebhZi9KGGyyCdcvlbHM3R+qPSu kijanikiosk-staging
+            ssh_pwauth: false
+            disable_root: true
+            
+            write_files:
+              - path: /etc/kijanikiosk/node-labels
+                permissions: "0644"
+                content: |
+                  environment=staging
+                  instance_type=tiny
+                  managed_by=terraform
+                  region=ke-nairobi-local
+                  role=logs
+            
+            # Security-group equivalent: the host firewall is closed from first boot,
+            # before Ansible ever connects. Only SSH from admin networks is allowed.
+            runcmd:
+              - [ufw, allow, from, "172.16.0.0/12", to, any, port, "22", proto, tcp]
+              - [ufw, allow, from, "192.168.0.0/16", to, any, port, "22", proto, tcp]
+              - [ufw, allow, from, "10.0.0.0/8", to, any, port, "22", proto, tcp]
+              - [ufw, default, deny, incoming]
+              - [ufw, default, allow, outgoing]
+              - [ufw, --force, enable]
+        EOT -> null
+      - content_base64sha256 = "8g+7MP+KFcE5kkHkFwjZPOaOAialM0eJCd1qPw+jqXM=" -> null
+      - content_base64sha512 = "p8S2J+74o7bqAbeMxZKQ6+tH/dejrAsmrmgOyp3FxL+eYK5h77YyD5oS2XY9rNfsiulWzt13WCJCadQU+YOQpw==" -> null
+      - content_md5          = "c99997fd4d88035167c6096f47820e2d" -> null
+      - content_sha1         = "a9c06c2ad9f970b854fb3c5e140d6aa1603d1711" -> null
+      - content_sha256       = "f20fbb30ff8a15c1399241e41708d93ce68e0226a533478909dd6a3f0fa3a973" -> null
+      - content_sha512       = "a7c4b627eef8a3b6ea01b78cc59290ebeb47fdd7a3ac0b26ae680eca9dc5c4bf9e60ae61efb6320f9a12d9763dacd7ec8ae956cedd7758224269d414f98390a7" -> null
+      - directory_permission = "0777" -> null
+      - file_permission      = "0644" -> null
+      - filename             = "./.generated/kijanikiosk-logs-f20fbb30ff8a.yaml" -> null
+      - id                   = "a9c06c2ad9f970b854fb3c5e140d6aa1603d1711" -> null
+    }
+
+  # module.app_server["logs"].multipass_instance.this will be destroyed
+  - resource "multipass_instance" "this" {
+      - cloudinit_file = "./.generated/kijanikiosk-logs-f20fbb30ff8a.yaml" -> null
+      - cpus           = 1 -> null
+      - disk           = "5G" -> null
+      - image          = "22.04" -> null
+      - ipv4           = "10.25.44.29" -> null
+      - memory         = "512M" -> null
+      - name           = "kijanikiosk-logs" -> null
+    }
+
+  # module.app_server["payments"].local_file.cloud_init will be destroyed
+  - resource "local_file" "cloud_init" {
+      - content              = <<-EOT
+            #cloud-config
+            # Rendered by Terraform (module app_server). Runs once, at first boot.
+            
+            # Key pair: append our public key to the image's default user. Passwords stay off.
+            ssh_authorized_keys:
+              - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMoUuHOEZ5MNgJFA40ebhZi9KGGyyCdcvlbHM3R+qPSu kijanikiosk-staging
+            ssh_pwauth: false
+            disable_root: true
+            
+            write_files:
+              - path: /etc/kijanikiosk/node-labels
+                permissions: "0644"
+                content: |
+                  environment=staging
+                  instance_type=tiny
+                  managed_by=terraform
+                  region=ke-nairobi-local
+                  role=payments
+            
+            # Security-group equivalent: the host firewall is closed from first boot,
+            # before Ansible ever connects. Only SSH from admin networks is allowed.
+            runcmd:
+              - [ufw, allow, from, "172.16.0.0/12", to, any, port, "22", proto, tcp]
+              - [ufw, allow, from, "192.168.0.0/16", to, any, port, "22", proto, tcp]
+              - [ufw, allow, from, "10.0.0.0/8", to, any, port, "22", proto, tcp]
+              - [ufw, default, deny, incoming]
+              - [ufw, default, allow, outgoing]
+              - [ufw, --force, enable]
+        EOT -> null
+      - content_base64sha256 = "ik5GUOivKocrKptF/K5PB/AgjPjlu8/PJz3icsB0/z4=" -> null
+      - content_base64sha512 = "ydGjkjxZLfrzGd2dqJG9m0byCVSrM8JiyCoKbhoeO7PGCZB0wr6leO7h0+0RYDNa2aAdoKSxZYKNqBdCJenBRg==" -> null
+      - content_md5          = "7dc5770b97c59e0dc91818ae8e74af14" -> null
+      - content_sha1         = "b732aa8a43b7c60d260ab481f48ef4fe656659c7" -> null
+      - content_sha256       = "8a4e4650e8af2a872b2a9b45fcae4f07f0208cf8e5bbcfcf273de272c074ff3e" -> null
+      - content_sha512       = "c9d1a3923c592dfaf319dd9da891bd9b46f20954ab33c262c82a0a6e1a1e3bb3c6099074c2bea578eee1d3ed1160335ad9a01da0a4b165828da8174225e9c146" -> null
+      - directory_permission = "0777" -> null
+      - file_permission      = "0644" -> null
+      - filename             = "./.generated/kijanikiosk-payments-8a4e4650e8af.yaml" -> null
+      - id                   = "b732aa8a43b7c60d260ab481f48ef4fe656659c7" -> null
+    }
+
+  # module.app_server["payments"].multipass_instance.this will be destroyed
+  - resource "multipass_instance" "this" {
+      - cloudinit_file = "./.generated/kijanikiosk-payments-8a4e4650e8af.yaml" -> null
+      - cpus           = 1 -> null
+      - disk           = "5G" -> null
+      - image          = "22.04" -> null
+      - ipv4           = "10.25.44.240" -> null
+      - memory         = "512M" -> null
+      - name           = "kijanikiosk-payments" -> null
+    }
+
+Plan: 0 to add, 0 to change, 6 to destroy.
+
+Changes to Outputs:
+  - admin_cidrs        = [
+      - "172.16.0.0/12",
+      - "192.168.0.0/16",
+      - "10.0.0.0/8",
+    ] -> null
+  - ansible_inventory  = <<-EOT
+        [kijanikiosk]
+        kk-api ansible_host=10.25.44.210
+        kk-logs ansible_host=10.25.44.29
+        kk-payments ansible_host=10.25.44.240
+    EOT -> null
+  - api_server_ip      = "10.25.44.210" -> null
+  - image_hashes       = {
+      - api      = "2099e63da0b8 (Ubuntu 22.04 LTS)"
+      - logs     = "2099e63da0b8 (Ubuntu 22.04 LTS)"
+      - payments = "2099e63da0b8 (Ubuntu 22.04 LTS)"
+    } -> null
+  - logs_server_ip     = "10.25.44.29" -> null
+  - payments_server_ip = "10.25.44.240" -> null
+  - server_ips         = {
+      - api      = "10.25.44.210"
+      - logs     = "10.25.44.29"
+      - payments = "10.25.44.240"
+    } -> null
+  - ssh_commands       = {
+      - api      = "ssh -i ~/.ssh/kijanikiosk_ed25519 ubuntu@10.25.44.210"
+      - logs     = "ssh -i ~/.ssh/kijanikiosk_ed25519 ubuntu@10.25.44.29"
+      - payments = "ssh -i ~/.ssh/kijanikiosk_ed25519 ubuntu@10.25.44.240"
+    } -> null
+  - ssh_key_name       = "kijanikiosk_ed25519" -> null
+  - vm_names           = {
+      - api      = "kijanikiosk-api"
+      - logs     = "kijanikiosk-logs"
+      - payments = "kijanikiosk-payments"
+    } -> null
+module.app_server["api"].multipass_instance.this: Destroying... [name=kijanikiosk-api]
+module.app_server["payments"].multipass_instance.this: Destroying... [name=kijanikiosk-payments]
+module.app_server["logs"].multipass_instance.this: Destroying... [name=kijanikiosk-logs]
+module.app_server["api"].multipass_instance.this: Destruction complete after 3s
+module.app_server["api"].local_file.cloud_init: Destroying... [id=9e7cd8f71f5f21de9da78e67ba6ec244b5a428b6]
+module.app_server["api"].local_file.cloud_init: Destruction complete after 0s
+module.app_server["payments"].multipass_instance.this: Still destroying... [name=kijanikiosk-payments, 00m10s elapsed]
+module.app_server["logs"].multipass_instance.this: Still destroying... [name=kijanikiosk-logs, 00m10s elapsed]
+module.app_server["logs"].multipass_instance.this: Destruction complete after 12s
+module.app_server["logs"].local_file.cloud_init: Destroying... [id=a9c06c2ad9f970b854fb3c5e140d6aa1603d1711]
+module.app_server["logs"].local_file.cloud_init: Destruction complete after 0s
+module.app_server["payments"].multipass_instance.this: Still destroying... [name=kijanikiosk-payments, 00m21s elapsed]
+module.app_server["payments"].multipass_instance.this: Destruction complete after 28s
+module.app_server["payments"].local_file.cloud_init: Destroying... [id=b732aa8a43b7c60d260ab481f48ef4fe656659c7]
+module.app_server["payments"].local_file.cloud_init: Destruction complete after 0s
+
+Destroy complete! Resources: 6 destroyed.
+[2026-10-22T12:19:00+0300] Servers destroyed. inventory.ini still shows the last run's hosts and is regenerated on the next run.
+
+==================== [2026-10-22T12:19:00+0300] PIPELINE COMPLETE (destroy) ====================
