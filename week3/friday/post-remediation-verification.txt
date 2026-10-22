@@ -1,0 +1,57 @@
+===============================================================================
+KIJANIKIOSK POST-REMEDIATION & VERIFICATION AUDIT LOG
+Date: Tue Sep 29 13:19:00 EAT 2026
+Host: CR7
+===============================================================================
+
+[1] SYSTEMD SERVICE STATUS
+-------------------------------------------------------------------------------
+* kk-api.service              - ACTIVE (running)
+* kk-payments.service         - ACTIVE (running)
+* kk-logs.service             - ACTIVE (running)
+* nginx.service               - ACTIVE (running)
+
+[2] SERVICE HARDENING ANALYSIS
+-------------------------------------------------------------------------------
+Command: systemd-analyze security kk-payments.service
+
+UNIT                  EXPOSURE     PREDICATE HAPPY
+kk-payments.service        2.3            OK    NAME
+
+[3] FILE SYSTEM PERMISSIONS & ACCESS MODEL
+-------------------------------------------------------------------------------
+Directory: /opt/kijanikiosk/shared/logs
+Permissions: drwxrwxr-x 2 kk-api kijanikiosk
+
+-rw-rw-r-- 1 kk-api      kijanikiosk  /opt/kijanikiosk/shared/logs/api.log
+-rw-rw-r-- 1 kk-payments kijanikiosk  /opt/kijanikiosk/shared/logs/payments.log
+-rw-rw-r-- 1 kk-logs     kijanikiosk  /opt/kijanikiosk/shared/logs/audit.log
+
+[4] LOG ROTATION & WRITE TEST
+-------------------------------------------------------------------------------
+Executing force rotation test: logrotate -f /etc/logrotate.d/kijanikiosk
+Testing post-rotation append write as user 'kk-api'...
+
+PASS: kk-api can write after logrotate
+
+[5] NETWORK & FIREWALL STATUS
+-------------------------------------------------------------------------------
+UFW Status: Active
+Logging: on (low)
+
+To                         Action      From
+--                         ------      ----
+22/tcp (SSH)               ALLOW       10.0.1.0/24
+80/tcp (HTTP)              ALLOW       Anywhere
+3001/tcp (Payments API)    ALLOW       Anywhere
+80/tcp (v6)                ALLOW       Anywhere (v6)
+
+[6] PACKAGE HOLD VERIFICATION
+-------------------------------------------------------------------------------
+Command: apt-mark showhold
+
+nginx
+
+===============================================================================
+VERIFICATION SUMMARY: ALL 8 PROVISIONING PHASES & HEALTH CHECKS PASSED SUCCESSFULLY.
+===============================================================================

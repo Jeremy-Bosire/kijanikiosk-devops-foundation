@@ -1,0 +1,28 @@
+[INFO] 2026-09-29T12:37:27+0300 - Starting Phase 1: Pre-flight Checks
+[INFO] 2026-09-29T12:37:27+0300 - Starting Phase 2: System Users & Group Provisioning
+[INFO] 2026-09-29T12:37:27+0300 - Already exists: group 'kijanikiosk'. Skipping creation.
+[INFO] 2026-09-29T12:37:27+0300 - Already exists: user 'kk-api'. Skipping creation.
+[INFO] 2026-09-29T12:37:27+0300 - Already exists: user 'kk-payments'. Skipping creation.
+[INFO] 2026-09-29T12:37:27+0300 - Already exists: user 'kk-logs'. Skipping creation.
+[INFO] 2026-09-29T12:37:27+0300 - Starting Phase 3: Directory Structure & Permissions Setup
+[INFO] 2026-09-29T12:37:27+0300 - Applied default ACLs to /opt/kijanikiosk/shared/logs/.
+[INFO] 2026-09-29T12:37:27+0300 - Starting Phase 4: Package Management
+[INFO] 2026-09-29T12:37:27+0300 - Installing 'nginx'...
+[INFO] 2026-09-29T12:37:30+0300 - Package 'nginx' is already on hold.
+[INFO] 2026-09-29T12:37:30+0300 - Starting Phase 5: Firewall Baseline Setup
+[INFO] 2026-09-29T12:37:34+0300 - Firewall successfully re-initialized and enabled.
+[INFO] 2026-09-29T12:37:34+0300 - Starting Phase 6: systemd Unit Files Setup
+[INFO] 2026-09-29T12:37:34+0300 - systemd unit files written and enabled.
+[INFO] 2026-09-29T12:37:34+0300 - Starting Phase 7: Journal Persistence & Log Rotation
+[INFO] 2026-09-29T12:37:34+0300 - Journal persistence configured (500MB cap) and logrotate verified.
+[INFO] 2026-09-29T12:37:34+0300 - Starting Phase 8: Monitoring Health Check File Generation
+[INFO] 2026-09-29T12:37:35+0300 - Health check output written to /opt/kijanikiosk/health/last-provision.json.
+[INFO] 2026-09-29T12:37:35+0300 - Starting Final Verification Phase
+[PASS] /opt/kijanikiosk/config mode is 0770
+[PASS] SSH (22/tcp) rule present
+[PASS] HTTP (80/tcp) rule present
+[PASS] External port 3001 DENY rule present
+[PASS] Loopback port 3001 ALLOW rule present
+[PASS] logrotate config syntax valid
+[PASS] Health check JSON file exists
+[INFO] 2026-09-29T12:37:35+0300 - ALL VERIFICATION CHECKS PASSED SUCCESSFULLY.

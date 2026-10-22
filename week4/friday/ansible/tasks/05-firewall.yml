@@ -1,0 +1,82 @@
+---
+# Week 3 rule order, made idempotent: allows first, explicit deny for the
+# service port last, default-deny and enable at the end so we never lock
+# ourselves out mid-run. (Week 3 used "ufw --force reset", which can never
+# report "unchanged" - the module below can.)
+- name: Allow SSH from admin networks only (Week 3 allowed it from anywhere)
+  community.general.ufw:
+    rule: allow
+    proto: tcp
+    from_ip: "{{ item }}"
+    to_port: "22"
+    comment: Allow SSH from admin networks
+  loop: "{{ ssh_allowed_cidrs }}"
+
+- name: Allow HTTP on the web-facing server
+  community.general.ufw:
+    rule: allow
+    proto: tcp
+    to_port: "80"
+    comment: Allow HTTP traffic
+  when: open_http
+
+- name: Allow loopback traffic to the service port
+  community.general.ufw:
+    rule: allow
+    interface: lo
+    direction: in
+    to_port: "{{ kk_service.port | string }}"
+    comment: "Allow internal loopback to {{ kk_service.name }}"
+
+- name: Allow the service port from peer servers
+  community.general.ufw:
+    rule: allow
+    proto: tcp
+    from_ip: "{{ item }}"
+    to_port: "{{ kk_service.port | string }}"
+    comment: "Allow peer to {{ kk_service.name }}"
+  loop: "{{ kk_peer_ips }}"
+
+- name: Allow the service port from admin networks (front-door service only)
+  community.general.ufw:
+    rule: allow
+    proto: tcp
+    from_ip: "{{ item }}"
+    to_port: "{{ kk_service.port | string }}"
+    comment: "Allow admin networks to {{ kk_service.name }}"
+  loop: "{{ ssh_allowed_cidrs if kk_service.expose_to_admin else [] }}"
+
+- name: Deny everything else to the service port
+  community.general.ufw:
+    rule: deny
+    proto: tcp
+    to_port: "{{ kk_service.port | string }}"
+    comment: "Deny external direct access to {{ kk_service.name }}"
+
+- name: Default deny incoming
+  community.general.ufw:
+    default: deny
+    direction: incoming
+
+- name: Default allow outgoing
+  community.general.ufw:
+    default: allow
+    direction: outgoing
+
+- name: Set firewall logging level
+  community.general.ufw:
+    logging: "{{ ufw_logging }}"
+
+- name: Enable firewall
+  community.general.ufw:
+    state: enabled
+
+- name: Harden SSH daemon (keys only, no root, named user only)
+  ansible.builtin.template:
+    src: sshd-kijanikiosk.conf.j2
+    dest: /etc/ssh/sshd_config.d/10-kijanikiosk.conf
+    owner: root
+    group: root
+    mode: "0644"
+    validate: /usr/sbin/sshd -t -f %s
+  notify: Reload ssh

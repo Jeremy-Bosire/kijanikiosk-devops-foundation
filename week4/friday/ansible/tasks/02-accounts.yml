@@ -1,0 +1,17 @@
+---
+- name: Create shared application group (Week 3)
+  ansible.builtin.group:
+    name: "{{ kk_group }}"
+    system: true
+    state: present
+
+- name: Create the service account for this server's role (no login, no password)
+  ansible.builtin.user:
+    name: "{{ kk_service.name }}"
+    group: "{{ kk_group }}"
+    system: true
+    shell: "{{ kk_service_shell }}"
+    home: /nonexistent
+    create_home: false
+    password_lock: true
+    state: present

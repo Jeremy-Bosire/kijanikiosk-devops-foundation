@@ -1,0 +1,23 @@
+---
+kk_service:
+  name: kk-logs
+  description: KijaniKiosk Logging Service
+  env_file: logs.env
+  port: 3002
+  hardening: standard
+  expose_to_admin: false
+  allowed_peers:               # both application servers ship logs here
+    - kk-api
+    - kk-payments
+  memory_max: 512M
+  tasks_max: 64
+  env:
+    KK_LOGS_RETENTION_DAYS: "14"
+
+extra_packages:
+  - zstd
+held_packages: []
+open_http: false
+
+# The log server keeps a bigger journal than the application servers.
+journal_system_max_use: 1G

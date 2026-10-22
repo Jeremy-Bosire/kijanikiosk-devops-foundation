@@ -1,0 +1,75 @@
+---
+# Values shared by every KijaniKiosk server. Anything that differs per server
+# lives in host_vars/<host>.yml. Layout and names follow the Week 3 provisioning
+# script (week3/friday/kijanikiosk-provision.sh).
+
+# --- Connection (Integration Challenge B) -----------------------------------
+# Must point at the private half of the key Terraform installed
+# (terraform var ssh_key_name). pipeline.sh fails fast if they differ.
+ansible_user: ubuntu
+ansible_ssh_private_key_file: ~/.ssh/kijanikiosk_ed25519
+
+kk_environment: staging
+
+# --- Layout (Week 3) -----------------------------------------------------------
+kk_group: kijanikiosk
+kk_root: /opt/kijanikiosk
+kk_app_dir: "{{ kk_root }}/app"
+# Config lives under /opt, not /etc (Integration Challenge D).
+kk_config_dir: "{{ kk_root }}/config"
+kk_shared_logs_dir: "{{ kk_root }}/shared/logs"
+kk_health_dir: "{{ kk_root }}/health"
+kk_env_file: "{{ kk_config_dir }}/{{ kk_service.env_file }}"
+kk_bind_address: 0.0.0.0
+
+# --- Phase 1: packages ----------------------------------------------------------
+common_packages:
+  - python3
+  - ufw
+  - logrotate
+  - acl
+  - curl
+  - jq
+  - ca-certificates
+apt_cache_valid_time: 86400
+
+# --- Phase 2: service accounts --------------------------------------------------
+# Week 3 created all three accounts on its single server. Each server now gets
+# only the account for the service it runs (host_vars kk_service.name).
+kk_service_shell: /usr/sbin/nologin
+
+# --- Phase 3: directory structure -----------------------------------------------
+kk_directories:
+  - { path: "{{ kk_root }}", owner: root, group: root, mode: "0755" }
+  - { path: "{{ kk_root }}/shared", owner: root, group: root, mode: "0755" }
+  - { path: "{{ kk_config_dir }}", owner: root, group: "{{ kk_group }}", mode: "0770" }
+  - { path: "{{ kk_shared_logs_dir }}", owner: root, group: "{{ kk_group }}", mode: "0770" }
+  - { path: "{{ kk_app_dir }}", owner: root, group: "{{ kk_group }}", mode: "0770" }
+  - { path: "{{ kk_health_dir }}", owner: root, group: "{{ kk_group }}", mode: "0750" }
+
+# --- Phase 5: firewall + SSH ----------------------------------------------------
+# Must equal terraform var admin_cidrs (the boot-time "security group").
+# pipeline.sh fails fast if they differ.
+ssh_allowed_cidrs:
+  - 172.16.0.0/12
+  - 192.168.0.0/16
+  - 10.0.0.0/8
+ufw_logging: low
+
+# --- Phase 6: journal persistence -----------------------------------------------
+journal_storage: persistent
+# journal_system_max_use is per host (host_vars): the logs server keeps more.
+journal_max_retention: 1month
+
+# --- Phase 7: logrotate ---------------------------------------------------------
+logrotate_frequency: daily
+logrotate_rotate: 7
+logrotate_maxsize: 50M
+
+# --- Verification ---------------------------------------------------------------
+# systemd-analyze security score ceiling for services on the "strict" profile.
+kk_max_exposure_strict: 2.5
+
+# Peer hosts (host_vars allowed_peers) resolved to their current IPs from the
+# generated inventory - IPs are never typed into vars.
+kk_peer_ips: "{{ kk_service.allowed_peers | map('extract', hostvars, 'ansible_host') | list }}"
