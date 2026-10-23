@@ -1,0 +1,52 @@
+# Jenkins configuration as code. ${...} values are resolved from Docker secrets
+# mounted at /run/secrets/<name>; nothing secret is stored in this file.
+jenkins:
+  systemMessage: "KijaniKiosk CI: configured as code (week5/friday/ci-infra)"
+  numExecutors: 2
+  mode: NORMAL
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: admin
+          password: ${jenkins_admin_password}
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: nexus-publisher
+              username: kk-publisher
+              password: ${nexus_publisher_password}
+              description: "Nexus npm-hosted publish-only account"
+
+security:
+  globalJobDslSecurityConfiguration:
+    useScriptSecurity: false
+
+unclassified:
+  location:
+    url: http://localhost:8080/
+
+jobs:
+  - script: |
+      pipelineJob('kijanikiosk-payments') {
+        description('KijaniKiosk payments CI: lint, build, verify, archive, publish to Nexus')
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote { url('file:///repo') }
+                branch('*/feature/week5-ci-pipeline')
+              }
+            }
+            scriptPath('Jenkinsfile')
+            lightweight(false)
+          }
+        }
+      }

@@ -1,0 +1,11 @@
+Fault commit: ac1a7e2 test(fault-2): build script reads non-existent source dir (Build fault)
+Build #6: FAILED in 89s
+  Declarative: Checkout SCM    SUCCESS         0.8s
+  Lint                         SUCCESS        13.1s
+  Build                        FAILED          2.0s
+  Verify                       SUCCESS         0.7s
+  Test                         FAILED          0.4s
+  Security Audit               FAILED          0.4s
+  Archive                      FAILED          0.2s
+  Publish                      FAILED          0.2s
+  Declarative: Post Actions    SUCCESS         0.6s

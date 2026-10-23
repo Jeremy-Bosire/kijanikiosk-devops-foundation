@@ -1,0 +1,323 @@
+Started by user admin
+Checking out git file:///repo into /var/jenkins_home/workspace/kijanikiosk-payments@script/527aea45b3285cdfe5540c67f1a436e98a8fbe219b0da8ad7403d683ae8e60ac to read Jenkinsfile
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/kijanikiosk-payments@script/527aea45b3285cdfe5540c67f1a436e98a8fbe219b0da8ad7403d683ae8e60ac/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url file:///repo # timeout=10
+Fetching upstream changes from file:///repo
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- file:///repo +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/feature/week5-ci-pipeline^{commit} # timeout=10
+Checking out Revision e5da9426adaf4cd9ca9cd9fb1c6d048d741c4371 (refs/remotes/origin/feature/week5-ci-pipeline)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f e5da9426adaf4cd9ca9cd9fb1c6d048d741c4371 # timeout=10
+Commit message: "test(fault-3): wrong fee for KES 100-500 tier (Test fault)"
+ > git rev-list --no-walk 8d939755f46b2314cb481dbbf6a3962827fd6ae7 # timeout=10
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/kijanikiosk-payments
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository file:///repo
+ > git init /var/jenkins_home/workspace/kijanikiosk-payments # timeout=10
+Fetching upstream changes from file:///repo
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- file:///repo +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url file:///repo # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+ > git rev-parse refs/remotes/origin/feature/week5-ci-pipeline^{commit} # timeout=10
+Checking out Revision e5da9426adaf4cd9ca9cd9fb1c6d048d741c4371 (refs/remotes/origin/feature/week5-ci-pipeline)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f e5da9426adaf4cd9ca9cd9fb1c6d048d741c4371 # timeout=10
+Commit message: "test(fault-3): wrong fee for KES 100-500 tier (Test fault)"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker inspect -f . node:22.11.0-alpine3.20
+.
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] withDockerContainer
+Jenkins seems to be running inside container 171326bd081562c30193dc0e935fdc360ea395742444eb0bc82258458fad0283
+$ docker run -t -d -u 1000:1000 --network kk-ci -w /var/jenkins_home/workspace/kijanikiosk-payments --volumes-from 171326bd081562c30193dc0e935fdc360ea395742444eb0bc82258458fad0283 -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** node:22.11.0-alpine3.20 cat
+$ docker top d43a03aa242e6f287096cb5f455ac8cd8b729c762cbb7a93f2b49257b4fff564 -eo pid,comm
+[Pipeline] {
+[Pipeline] sh
++ node -p 'require('"'"'./kijanikiosk-payments/package.json'"'"').version'
+[Pipeline] sh
++ node -p 'require('"'"'./kijanikiosk-payments/package.json'"'"').version'
+[Pipeline] sh
++ node -p 'require('"'"'./kijanikiosk-payments/package.json'"'"').version'
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] timeout
+Timeout set to expire in 10 min
+[Pipeline] {
+[Pipeline] timestamps
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Lint)
+[Pipeline] dir
+[2026-10-23T08:03:05.528Z] Running in /var/jenkins_home/workspace/kijanikiosk-payments/kijanikiosk-payments
+[Pipeline] {
+[Pipeline] sh
+[2026-10-23T08:03:06.291Z] + node --version
+[2026-10-23T08:03:06.291Z] + npm --version
+[2026-10-23T08:03:06.845Z] + . /etc/os-release
+[2026-10-23T08:03:06.845Z] + NAME='Alpine Linux'
+[2026-10-23T08:03:06.845Z] + ID=alpine
+[2026-10-23T08:03:06.845Z] + VERSION_ID=3.20.3
+[2026-10-23T08:03:06.845Z] + PRETTY_NAME='Alpine Linux v3.20'
+[2026-10-23T08:03:06.845Z] + HOME_URL=https://alpinelinux.org/
+[2026-10-23T08:03:06.845Z] + BUG_REPORT_URL=https://gitlab.alpinelinux.org/alpine/aports/-/issues
+[2026-10-23T08:03:06.845Z] + echo 'Alpine Linux v3.20'
+[2026-10-23T08:03:06.845Z] + echo 'Agent: v22.11.0 / npm 10.9.0 on Alpine Linux v3.20'
+[2026-10-23T08:03:06.845Z] Agent: v22.11.0 / npm 10.9.0 on Alpine Linux v3.20
+[2026-10-23T08:03:06.845Z] + echo 'Building kijanikiosk-payments@1.0.0-e5da942 from commit e5da9426adaf4cd9ca9cd9fb1c6d048d741c4371'
+[2026-10-23T08:03:06.845Z] Building kijanikiosk-payments@1.0.0-e5da942 from commit e5da9426adaf4cd9ca9cd9fb1c6d048d741c4371
+[2026-10-23T08:03:06.845Z] + npm ci --prefer-offline --no-audit
+[2026-10-23T08:03:13.336Z] npm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+[2026-10-23T08:03:13.336Z] 
+[2026-10-23T08:03:13.336Z] added 87 packages in 6s
+[2026-10-23T08:03:13.336Z] + npm run lint
+[2026-10-23T08:03:13.336Z] 
+[2026-10-23T08:03:13.336Z] > kijanikiosk-payments@1.0.0 lint
+[2026-10-23T08:03:13.336Z] > eslint .
+[2026-10-23T08:03:13.336Z] 
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build)
+[Pipeline] dir
+[2026-10-23T08:03:18.646Z] Running in /var/jenkins_home/workspace/kijanikiosk-payments/kijanikiosk-payments
+[Pipeline] {
+[Pipeline] sh
+[2026-10-23T08:03:19.463Z] + npm version 1.0.0-e5da942 --no-git-tag-version
+[2026-10-23T08:03:19.716Z] v1.0.0-e5da942
+[2026-10-23T08:03:19.716Z] + npm run build
+[2026-10-23T08:03:19.971Z] 
+[2026-10-23T08:03:19.972Z] > kijanikiosk-payments@1.0.0-e5da942 build
+[2026-10-23T08:03:19.972Z] > node scripts/build.js
+[2026-10-23T08:03:19.972Z] 
+[2026-10-23T08:03:19.972Z] Built kijanikiosk-payments@1.0.0-e5da942 -> dist/ (2 files)
+[2026-10-23T08:03:19.972Z] + cat dist/build-info.json
+[2026-10-23T08:03:19.972Z] {
+[2026-10-23T08:03:19.972Z]   "name": "kijanikiosk-payments",
+[2026-10-23T08:03:19.972Z]   "version": "1.0.0-e5da942",
+[2026-10-23T08:03:19.973Z]   "gitCommit": "e5da9426adaf4cd9ca9cd9fb1c6d048d741c4371",
+[2026-10-23T08:03:19.973Z]   "buildNumber": "8",
+[2026-10-23T08:03:19.973Z]   "builtAt": "2026-10-23T08:03:19.836Z"
+[2026-10-23T08:03:19.973Z] }
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Verify)
+[Pipeline] parallel
+[Pipeline] { (Branch: Test)
+[Pipeline] { (Branch: Security Audit)
+[Pipeline] stage
+[Pipeline] { (Test)
+[Pipeline] stage
+[Pipeline] { (Security Audit)
+[Pipeline] dir
+[2026-10-23T08:03:23.926Z] Running in /var/jenkins_home/workspace/kijanikiosk-payments/kijanikiosk-payments
+[Pipeline] {
+[Pipeline] dir
+[2026-10-23T08:03:35.648Z] Running in /var/jenkins_home/workspace/kijanikiosk-payments/kijanikiosk-payments
+[Pipeline] {
+[Pipeline] sh
+[Pipeline] sh
+[2026-10-23T08:03:55.575Z] + npm run test:ci
+[2026-10-23T08:03:55.970Z] + npm audit '--audit-level=high'
+[2026-10-23T08:03:58.223Z] 
+[2026-10-23T08:03:58.223Z] > kijanikiosk-payments@1.0.0-e5da942 test:ci
+[2026-10-23T08:03:58.223Z] > mkdir -p reports && node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=reports/junit.xml test/*.test.js
+[2026-10-23T08:03:58.223Z] 
+[2026-10-23T08:03:59.580Z] ✔ toCents converts shillings to integer cents (11.110699ms)
+[2026-10-23T08:03:59.580Z] ✔ toCents rejects non-numeric input (4.616735ms)
+[2026-10-23T08:03:59.580Z] ✔ validateAmount enforces minimum and maximum (1.061771ms)
+[2026-10-23T08:03:59.580Z] ✖ calculateFee applies the correct tier at each boundary (17.256128ms)
+[2026-10-23T08:03:59.580Z]   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+[2026-10-23T08:03:59.580Z]   
+[2026-10-23T08:03:59.580Z]   750 !== 700
+[2026-10-23T08:03:59.580Z]   
+[2026-10-23T08:03:59.580Z]       at TestContext.<anonymous> (/var/jenkins_home/workspace/kijanikiosk-payments/kijanikiosk-payments/test/index.test.js:26:10)
+[2026-10-23T08:03:59.580Z]       at Test.runInAsyncScope (node:async_hooks:211:14)
+[2026-10-23T08:03:59.585Z]       at Test.run (node:internal/test_runner/test:934:25)
+[2026-10-23T08:03:59.585Z]       at Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+[2026-10-23T08:03:59.585Z]       at Test.postRun (node:internal/test_runner/test:1045:19)
+[2026-10-23T08:03:59.585Z]       at Test.run (node:internal/test_runner/test:973:12)
+[2026-10-23T08:03:59.585Z]       at async Test.processPendingSubtests (node:internal/test_runner/test:633:7) {
+[2026-10-23T08:03:59.585Z]     generatedMessage: true,
+[2026-10-23T08:03:59.585Z]     code: 'ERR_ASSERTION',
+[2026-10-23T08:03:59.585Z]     actual: 750,
+[2026-10-23T08:03:59.586Z]     expected: 700,
+[2026-10-23T08:03:59.586Z]     operator: 'strictEqual'
+[2026-10-23T08:03:59.586Z]   }
+[2026-10-23T08:03:59.586Z] 
+[2026-10-23T08:03:59.586Z] ✖ quote returns amount, fee and total in cents (8.397504ms)
+[2026-10-23T08:03:59.586Z]   AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+[2026-10-23T08:03:59.586Z]   + actual - expected
+[2026-10-23T08:03:59.586Z]   
+[2026-10-23T08:03:59.586Z]     {
+[2026-10-23T08:03:59.586Z]       amountCents: 25000,
+[2026-10-23T08:03:59.586Z]       currency: 'KES',
+[2026-10-23T08:03:59.586Z]   +   feeCents: 750,
+[2026-10-23T08:03:59.586Z]   +   totalCents: 25750
+[2026-10-23T08:03:59.586Z]   -   feeCents: 700,
+[2026-10-23T08:03:59.586Z]   -   totalCents: 25700
+[2026-10-23T08:03:59.586Z]     }
+[2026-10-23T08:03:59.587Z]       at TestContext.<anonymous> (/var/jenkins_home/workspace/kijanikiosk-payments/kijanikiosk-payments/test/index.test.js:32:10)
+[2026-10-23T08:03:59.587Z]       at Test.runInAsyncScope (node:async_hooks:211:14)
+[2026-10-23T08:03:59.587Z]       at Test.run (node:internal/test_runner/test:934:25)
+[2026-10-23T08:03:59.587Z]       at Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+[2026-10-23T08:03:59.587Z]       at Test.postRun (node:internal/test_runner/test:1045:19)
+[2026-10-23T08:03:59.587Z]       at Test.run (node:internal/test_runner/test:973:12)
+[2026-10-23T08:03:59.587Z]       at async Test.processPendingSubtests (node:internal/test_runner/test:633:7) {
+[2026-10-23T08:03:59.587Z]     generatedMessage: true,
+[2026-10-23T08:03:59.601Z]     code: 'ERR_ASSERTION',
+[2026-10-23T08:03:59.601Z]     actual: { currency: 'KES', amountCents: 25000, feeCents: 750, totalCents: 25750 },
+[2026-10-23T08:03:59.601Z]     expected: { currency: 'KES', amountCents: 25000, feeCents: 700, totalCents: 25700 },
+[2026-10-23T08:03:59.601Z]     operator: 'deepStrictEqual'
+[2026-10-23T08:03:59.601Z]   }
+[2026-10-23T08:03:59.601Z] 
+[2026-10-23T08:03:59.601Z] ✔ formatKes renders human-readable shillings (521.412213ms)
+[2026-10-23T08:03:59.601Z] ℹ tests 6
+[2026-10-23T08:03:59.602Z] ℹ suites 0
+[2026-10-23T08:03:59.602Z] ℹ pass 4
+[2026-10-23T08:03:59.602Z] ℹ fail 2
+[2026-10-23T08:03:59.602Z] ℹ cancelled 0
+[2026-10-23T08:03:59.602Z] ℹ skipped 0
+[2026-10-23T08:03:59.602Z] ℹ todo 0
+[2026-10-23T08:03:59.602Z] ℹ duration_ms 1247.943756
+[2026-10-23T08:03:59.602Z] 
+[2026-10-23T08:03:59.602Z] ✖ failing tests:
+[2026-10-23T08:03:59.602Z] 
+[2026-10-23T08:03:59.602Z] test at test/index.test.js:24:1
+[2026-10-23T08:03:59.602Z] ✖ calculateFee applies the correct tier at each boundary (17.256128ms)
+[2026-10-23T08:03:59.602Z]   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+[2026-10-23T08:03:59.602Z]   
+[2026-10-23T08:03:59.602Z]   750 !== 700
+[2026-10-23T08:03:59.602Z]   
+[2026-10-23T08:03:59.603Z]       at TestContext.<anonymous> (/var/jenkins_home/workspace/kijanikiosk-payments/kijanikiosk-payments/test/index.test.js:26:10)
+[2026-10-23T08:03:59.603Z]       at Test.runInAsyncScope (node:async_hooks:211:14)
+[2026-10-23T08:03:59.603Z]       at Test.run (node:internal/test_runner/test:934:25)
+[2026-10-23T08:03:59.603Z]       at Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+[2026-10-23T08:03:59.603Z]       at Test.postRun (node:internal/test_runner/test:1045:19)
+[2026-10-23T08:03:59.603Z]       at Test.run (node:internal/test_runner/test:973:12)
+[2026-10-23T08:03:59.603Z]       at async Test.processPendingSubtests (node:internal/test_runner/test:633:7) {
+[2026-10-23T08:03:59.603Z]     generatedMessage: true,
+[2026-10-23T08:03:59.603Z]     code: 'ERR_ASSERTION',
+[2026-10-23T08:03:59.603Z]     actual: 750,
+[2026-10-23T08:03:59.603Z]     expected: 700,
+[2026-10-23T08:03:59.603Z]     operator: 'strictEqual'
+[2026-10-23T08:03:59.603Z]   }
+[2026-10-23T08:03:59.603Z] 
+[2026-10-23T08:03:59.603Z] test at test/index.test.js:31:1
+[2026-10-23T08:03:59.603Z] ✖ quote returns amount, fee and total in cents (8.397504ms)
+[2026-10-23T08:03:59.604Z]   AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+[2026-10-23T08:03:59.604Z]   + actual - expected
+[2026-10-23T08:03:59.625Z]   
+[2026-10-23T08:03:59.628Z]     {
+[2026-10-23T08:03:59.628Z]       amountCents: 25000,
+[2026-10-23T08:03:59.628Z]       currency: 'KES',
+[2026-10-23T08:03:59.628Z]   +   feeCents: 750,
+[2026-10-23T08:03:59.628Z]   +   totalCents: 25750
+[2026-10-23T08:03:59.629Z]   -   feeCents: 700,
+[2026-10-23T08:03:59.629Z]   -   totalCents: 25700
+[2026-10-23T08:03:59.629Z]     }
+[2026-10-23T08:03:59.629Z]       at TestContext.<anonymous> (/var/jenkins_home/workspace/kijanikiosk-payments/kijanikiosk-payments/test/index.test.js:32:10)
+[2026-10-23T08:03:59.629Z]       at Test.runInAsyncScope (node:async_hooks:211:14)
+[2026-10-23T08:03:59.629Z]       at Test.run (node:internal/test_runner/test:934:25)
+[2026-10-23T08:03:59.629Z]       at Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+[2026-10-23T08:03:59.629Z]       at Test.postRun (node:internal/test_runner/test:1045:19)
+[2026-10-23T08:03:59.639Z]       at Test.run (node:internal/test_runner/test:973:12)
+[2026-10-23T08:03:59.639Z]       at async Test.processPendingSubtests (node:internal/test_runner/test:633:7) {
+[2026-10-23T08:03:59.639Z]     generatedMessage: true,
+[2026-10-23T08:03:59.639Z]     code: 'ERR_ASSERTION',
+[2026-10-23T08:03:59.639Z]     actual: { currency: 'KES', amountCents: 25000, feeCents: 750, totalCents: 25750 },
+[2026-10-23T08:03:59.639Z]     expected: { currency: 'KES', amountCents: 25000, feeCents: 700, totalCents: 25700 },
+[2026-10-23T08:03:59.639Z]     operator: 'deepStrictEqual'
+[2026-10-23T08:03:59.639Z]   }
+[Pipeline] }
+[Pipeline] // dir
+[2026-10-23T08:04:04.342Z] found 0 vulnerabilities
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[2026-10-23T08:04:32.398Z] Failed in branch Test
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // parallel
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Archive)
+Stage "Archive" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Publish)
+Stage "Publish" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] junit
+[2026-10-23T08:04:40.784Z] Recording test results
+[2026-10-23T08:04:41.451Z] [Checks API] No suitable checks publisher found.
+[Pipeline] echo
+[2026-10-23T08:04:41.670Z] Total pipeline runtime: 2 min 41 sec
+[Pipeline] cleanWs
+[2026-10-23T08:04:41.939Z] [WS-CLEANUP] Deleting project workspace...
+[2026-10-23T08:04:41.942Z] [WS-CLEANUP] Deferred wipeout is used...
+[2026-10-23T08:04:42.013Z] [WS-CLEANUP] done
+[Pipeline] echo
+[2026-10-23T08:04:42.336Z] STATUS CHANGE: kijanikiosk-payments went from SUCCESS to FAILURE at #8
+[Pipeline] echo
+[2026-10-23T08:04:42.685Z] FAILURE NOTIFICATION: kijanikiosk-payments #8 failed.
+[2026-10-23T08:04:42.685Z]   Commit  : e5da9426adaf4cd9ca9cd9fb1c6d048d741c4371
+[2026-10-23T08:04:42.685Z]   Version : 1.0.0-e5da942 was NOT published
+[2026-10-23T08:04:42.685Z]   Details : http://localhost:8080/job/kijanikiosk-payments/8/console
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timestamps
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+$ docker stop --time=1 d43a03aa242e6f287096cb5f455ac8cd8b729c762cbb7a93f2b49257b4fff564
+$ docker rm -f --volumes d43a03aa242e6f287096cb5f455ac8cd8b729c762cbb7a93f2b49257b4fff564
+[Pipeline] // withDockerContainer
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: script returned exit code 1
+Finished: FAILURE

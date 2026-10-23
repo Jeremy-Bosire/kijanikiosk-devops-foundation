@@ -1,0 +1,11 @@
+Restore commit: 8d93975 Revert "test(fault-2): build script reads non-existent source dir (Build fault)"
+Build #7: SUCCESS in 169s
+  Declarative: Checkout SCM    SUCCESS         1.8s
+  Lint                         SUCCESS        19.0s
+  Build                        SUCCESS         5.8s
+  Verify                       SUCCESS         0.6s
+  Test                         SUCCESS        12.1s
+  Security Audit               SUCCESS        14.8s
+  Archive                      SUCCESS        23.9s
+  Publish                      SUCCESS        23.7s
+  Declarative: Post Actions    SUCCESS         2.1s

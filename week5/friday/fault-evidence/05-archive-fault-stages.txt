@@ -1,0 +1,11 @@
+Fault commit: e8ca831 test(fault-5): package files list points at lib/ so tarball ships without build output (Archive fault)
+Build #13: FAILED in 49s
+  Declarative: Checkout SCM    SUCCESS         1.2s
+  Lint                         SUCCESS         5.9s
+  Build                        SUCCESS         1.9s
+  Verify                       SUCCESS         0.4s
+  Test                         SUCCESS         2.5s
+  Security Audit               SUCCESS         4.7s
+  Archive                      FAILED          2.8s
+  Publish                      FAILED          0.2s
+  Declarative: Post Actions    SUCCESS         1.1s
