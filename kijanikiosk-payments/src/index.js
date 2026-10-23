@@ -4,6 +4,7 @@
 // Amounts are handled in integer cents to avoid floating-point rounding.
 
 const CURRENCY = 'KES';
+const unusedDebugFlag = true;
 const MIN_AMOUNT_CENTS = 100; // KES 1.00
 const MAX_AMOUNT_CENTS = 15000000; // KES 150,000.00 single-transaction ceiling
 
