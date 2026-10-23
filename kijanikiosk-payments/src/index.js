@@ -10,7 +10,7 @@ const MAX_AMOUNT_CENTS = 15000000; // KES 150,000.00 single-transaction ceiling
 // Tiered transaction fee schedule (upper bound inclusive, in cents).
 const FEE_TIERS = [
   { upTo: 10000, fee: 0 }, // up to KES 100: free
-  { upTo: 50000, fee: 700 }, // up to KES 500
+  { upTo: 50000, fee: 750 }, // up to KES 500
   { upTo: 100000, fee: 1300 }, // up to KES 1,000
   { upTo: 1500000, fee: 2300 }, // up to KES 15,000
   { upTo: MAX_AMOUNT_CENTS, fee: 10800 },
