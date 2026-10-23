@@ -7,7 +7,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const root = path.resolve(__dirname, '..');
-const src = path.join(root, 'source');
+const src = path.join(root, 'src');
 const dist = path.join(root, 'dist');
 const pkg = require(path.join(root, 'package.json'));
 
