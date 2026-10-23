@@ -40,8 +40,9 @@ pipeline {
         NEXUS_REPOSITORY     = 'npm-hosted'
         NEXUS_REGISTRY       = "${NEXUS_URL}/repository/${NEXUS_REPOSITORY}/"
         NEXUS_CREDENTIALS_ID = 'nexus-publisher'
-        // The container has no writable $HOME; keep npm's cache inside the workspace.
-        npm_config_cache     = "${WORKSPACE}/.npm-cache"
+        // The container has no writable $HOME. The cache lives in JENKINS_HOME (shared into
+        // the container via --volumes-from) so cleanWs() does not throw it away every run.
+        npm_config_cache     = '/var/jenkins_home/.npm-cache'
         npm_config_fund      = 'false'
         CI                   = 'true'
         // <semver from package.json>-<first 7 chars of the commit>, e.g. 1.0.0-3f9a2c1
@@ -59,7 +60,7 @@ pipeline {
                     sh '''
                         echo "Agent: $(node --version) / npm $(npm --version) on $(. /etc/os-release && echo "$PRETTY_NAME")"
                         echo "Building ${PACKAGE_NAME}@${ARTIFACT_VERSION} from commit ${GIT_COMMIT}"
-                        npm ci
+                        npm ci --prefer-offline --no-audit
                         npm run lint
                     '''
                 }
@@ -128,6 +129,7 @@ pipeline {
                         // .npmrc is created and removed inside this one sh step; the trap
                         // removes it even when npm publish fails.
                         sh '''
+                            set +x   # no command tracing while the auth string exists
                             set -eu
                             trap 'rm -f .npmrc' EXIT
                             NEXUS_AUTH=$(printf '%s:%s' "$NEXUS_USER" "$NEXUS_PASS" | base64 | tr -d '\\n')
