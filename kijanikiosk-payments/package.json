@@ -4,7 +4,7 @@
   "description": "KijaniKiosk payments core: amount validation and fee calculation",
   "main": "dist/index.js",
   "files": [
-    "lib/"
+    "dist/"
   ],
   "scripts": {
     "lint": "eslint .",
