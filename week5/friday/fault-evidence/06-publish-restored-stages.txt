@@ -1,0 +1,11 @@
+Restore commit: 086a0e6 Revert "test(fault-1): unused variable in payments module (Lint fault)"
+Build #5: SUCCESS in 100s
+  Declarative: Checkout SCM    SUCCESS         0.7s
+  Lint                         SUCCESS        16.2s
+  Build                        SUCCESS        19.7s
+  Verify                       SUCCESS         0.3s
+  Test                         SUCCESS         4.1s
+  Security Audit               SUCCESS         7.0s
+  Archive                      SUCCESS         3.0s
+  Publish                      SUCCESS        13.7s
+  Declarative: Post Actions    SUCCESS         2.0s

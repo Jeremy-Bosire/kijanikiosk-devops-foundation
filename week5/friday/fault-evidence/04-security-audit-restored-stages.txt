@@ -1,0 +1,11 @@
+Restore commit: ed12c57 Revert "test(fault-4): add lodash 4.17.20 with known high-severity advisories (Security Audit fault)"
+Build #12: SUCCESS in 145s
+  Declarative: Checkout SCM    SUCCESS         0.9s
+  Lint                         SUCCESS        19.5s
+  Build                        SUCCESS         3.4s
+  Verify                       SUCCESS         1.4s
+  Test                         SUCCESS        27.6s
+  Security Audit               SUCCESS        34.1s
+  Archive                      SUCCESS         6.5s
+  Publish                      SUCCESS        11.1s
+  Declarative: Post Actions    SUCCESS         1.8s
