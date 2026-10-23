@@ -1,0 +1,11 @@
+Fault commit: e5da942 test(fault-3): wrong fee for KES 100-500 tier (Test fault)
+Build #8: FAILED in 167s
+  Declarative: Checkout SCM    SUCCESS         1.0s
+  Lint                         SUCCESS        13.0s
+  Build                        SUCCESS         2.5s
+  Verify                       SUCCESS         1.3s
+  Test                         FAILED         59.7s
+  Security Audit               SUCCESS        73.7s
+  Archive                      FAILED          0.8s
+  Publish                      FAILED          0.6s
+  Declarative: Post Actions    UNSTABLE        2.8s

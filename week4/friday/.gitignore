@@ -1,0 +1,12 @@
+# Terraform
+terraform/.terraform/
+terraform/.generated/
+terraform/tfplan
+terraform/.outputs.json
+*.tfstate
+*.tfstate.*
+# Ansible
+ansible/known_hosts.generated
+ansible/.inventory.*
+*.retry
+__pycache__/

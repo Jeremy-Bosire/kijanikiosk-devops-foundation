@@ -1,0 +1,77 @@
+# {{ ansible_managed }}
+# Hardening profile: {{ kk_service.hardening }}
+[Unit]
+Description={{ kk_service.description }}
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{ kk_service.name }}
+Group={{ kk_group }}
+WorkingDirectory={{ kk_app_dir }}
+# Read by systemd (PID 1) before the sandbox starts, and re-read by the app at
+# runtime. Kept under /opt, not /etc (Integration Challenge D).
+EnvironmentFile={{ kk_env_file }}
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 {{ kk_app_dir }}/kk_app.py
+Restart=on-failure
+RestartSec=5s
+
+# --- Resource limits ---
+MemoryMax={{ kk_service.memory_max }}
+TasksMax={{ kk_service.tasks_max }}
+
+# --- Baseline hardening (all services) ---
+NoNewPrivileges=yes
+# strict = the whole filesystem is read-only for this process, /opt included.
+ProtectSystem=strict
+ReadOnlyPaths={{ kk_config_dir }}
+ReadWritePaths={{ kk_shared_logs_dir }}
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+LockPersonality=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+UMask=0027
+{% if kk_service.hardening == 'strict' %}
+
+# --- Strict profile (payments-grade) ---
+PrivateUsers=yes
+ProtectProc=invisible
+ProcSubset=pid
+RestrictNamespaces=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+# Safe here: the runtime is CPython (no JIT). Week 3 rejected this for Node/V8.
+MemoryDenyWriteExecute=yes
+RemoveIPC=yes
+KeyringMode=private
+DevicePolicy=closed
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+SystemCallErrorNumber=EPERM
+# Network allow-list enforced in the kernel for this service only.
+IPAddressDeny=any
+IPAddressAllow=localhost
+{% for ip in kk_peer_ips %}
+IPAddressAllow={{ ip }}
+{% endfor %}
+{% if kk_service.expose_to_admin %}
+{% for cidr in ssh_allowed_cidrs %}
+IPAddressAllow={{ cidr }}
+{% endfor %}
+{% endif %}
+{% endif %}
+
+[Install]
+WantedBy=multi-user.target

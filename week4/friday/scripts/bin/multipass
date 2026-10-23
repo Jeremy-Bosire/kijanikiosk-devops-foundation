@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Compatibility shim between Multipass 1.17+ and terraform-provider-multipass 1.4.3.
+#
+# Multipass 1.17 added availability zones and now prints
+#     Launched: kijanikiosk-api in zone1
+# The provider takes everything after "Launched: " as the instance name, then
+# runs "multipass info 'kijanikiosk-api in zone1'", which fails - so Terraform
+# reports an error even though the VM was created. This shim trims the zone
+# suffix from launch output and passes every other command through untouched.
+# pipeline.sh puts this directory first on PATH.
+set -o pipefail
+
+self_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+real=""
+IFS=: read -ra path_dirs <<< "$PATH"
+for d in "${path_dirs[@]}"; do
+  [ -n "$d" ] || continue
+  [ "$(cd "$d" 2>/dev/null && pwd)" = "$self_dir" ] && continue
+  if [ -x "$d/multipass" ]; then real="$d/multipass"; break; fi
+done
+[ -n "$real" ] || { echo "multipass shim: real multipass not found on PATH" >&2; exit 127; }
+
+if [ "${1:-}" = "launch" ]; then
+  # The provider reads stdout+stderr together, and multipass may print the
+  # "Launched:" line on either, after progress text with carriage returns.
+  # Merge both, drop the CRs, and trim the zone suffix wherever it appears.
+  # Raw output is kept in /tmp/multipass-shim.log for troubleshooting.
+  "$real" "$@" 2>&1 | tee -a /tmp/multipass-shim.log | tr -d '\r' \
+    | sed -E 's/(Launched: [^[:space:]]+) in [^[:space:]]+/\1/'
+  exit "${PIPESTATUS[0]}"
+fi
+exec "$real" "$@"

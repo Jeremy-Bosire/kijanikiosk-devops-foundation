@@ -1,0 +1,438 @@
+
+==================== [2026-10-21T15:29:36+0300] Stage 0: preflight (multipass) ====================
+[2026-10-21T15:29:36+0300] MinIO state backend reachable
+[2026-10-21T15:29:36+0300] Tool versions:
+Terraform v1.16.5
+ansible-playbook [core 2.21.5]
+multipass   1.17.0
+
+==================== [2026-10-21T15:29:44+0300] Stage 1: Terraform ====================
+Initializing the backend...
+
+Successfully configured the backend "s3"! Terraform will automatically
+use this backend unless the backend configuration changes.
+
+Initializing modules...
+- app_server in modules/app_server
+
+Initializing provider plugins...
+- Reusing previous version of hashicorp/local from the dependency lock file
+- Reusing previous version of larstobi/multipass from the dependency lock file
+- Installing hashicorp/local v2.9.1...
+- Installed hashicorp/local v2.9.1 (signed by HashiCorp)
+- Installing larstobi/multipass v1.4.3...
+- Installed larstobi/multipass v1.4.3 (self-signed, key ID 797707331BF3549C)
+Partner and community providers are signed by their developers.
+If you'd like to know more about provider signing, you can read about it here:
+https://developer.hashicorp.com/terraform/cli/plugins/signing
+
+Terraform has been successfully initialized!
+Success! The configuration is valid.
+
+module.app_server["payments"].local_file.cloud_init: Refreshing state... [id=b732aa8a43b7c60d260ab481f48ef4fe656659c7]
+module.app_server["logs"].local_file.cloud_init: Refreshing state... [id=a9c06c2ad9f970b854fb3c5e140d6aa1603d1711]
+module.app_server["api"].local_file.cloud_init: Refreshing state... [id=9e7cd8f71f5f21de9da78e67ba6ec244b5a428b6]
+
+Note: Objects have changed outside of Terraform
+
+Terraform detected the following changes made outside of Terraform since the
+last "terraform apply" which may have affected this plan:
+
+  # module.app_server["api"].local_file.cloud_init has been deleted
+  - resource "local_file" "cloud_init" {
+      - filename             = "./.generated/kijanikiosk-api-b3a154810d85.yaml" -> null
+        id                   = "9e7cd8f71f5f21de9da78e67ba6ec244b5a428b6"
+        # (9 unchanged attributes hidden)
+    }
+
+  # module.app_server["logs"].local_file.cloud_init has been deleted
+  - resource "local_file" "cloud_init" {
+      - filename             = "./.generated/kijanikiosk-logs-f20fbb30ff8a.yaml" -> null
+        id                   = "a9c06c2ad9f970b854fb3c5e140d6aa1603d1711"
+        # (9 unchanged attributes hidden)
+    }
+
+  # module.app_server["payments"].local_file.cloud_init has been deleted
+  - resource "local_file" "cloud_init" {
+      - filename             = "./.generated/kijanikiosk-payments-8a4e4650e8af.yaml" -> null
+        id                   = "b732aa8a43b7c60d260ab481f48ef4fe656659c7"
+        # (9 unchanged attributes hidden)
+    }
+
+
+Unless you have made equivalent changes to your configuration, or ignored the
+relevant attributes using ignore_changes, the following plan may include
+actions to undo or respond to these changes.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+ <= read (data resources)
+
+Terraform will perform the following actions:
+
+  # module.app_server["api"].data.multipass_instance.this will be read during apply
+  # (depends on a resource or a module with changes pending)
+ <= data "multipass_instance" "this" {
+      + image      = (known after apply)
+      + image_hash = (known after apply)
+      + ipv4       = (known after apply)
+      + name       = "kijanikiosk-api"
+      + state      = (known after apply)
+    }
+
+  # module.app_server["api"].local_file.cloud_init will be created
+  + resource "local_file" "cloud_init" {
+      + content              = <<-EOT
+            #cloud-config
+            # Rendered by Terraform (module app_server). Runs once, at first boot.
+            
+            # Key pair: append our public key to the image's default user. Passwords stay off.
+            ssh_authorized_keys:
+              - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMoUuHOEZ5MNgJFA40ebhZi9KGGyyCdcvlbHM3R+qPSu kijanikiosk-staging
+            ssh_pwauth: false
+            disable_root: true
+            
+            write_files:
+              - path: /etc/kijanikiosk/node-labels
+                permissions: "0644"
+                content: |
+                  environment=staging
+                  instance_type=tiny
+                  managed_by=terraform
+                  region=ke-nairobi-local
+                  role=api
+            
+            # Security-group equivalent: the host firewall is closed from first boot,
+            # before Ansible ever connects. Only SSH from admin networks is allowed.
+            runcmd:
+              - [ufw, allow, from, "172.16.0.0/12", to, any, port, "22", proto, tcp]
+              - [ufw, allow, from, "192.168.0.0/16", to, any, port, "22", proto, tcp]
+              - [ufw, allow, from, "10.0.0.0/8", to, any, port, "22", proto, tcp]
+              - [ufw, default, deny, incoming]
+              - [ufw, default, allow, outgoing]
+              - [ufw, --force, enable]
+        EOT
+      + content_base64sha256 = (known after apply)
+      + content_base64sha512 = (known after apply)
+      + content_md5          = (known after apply)
+      + content_sha1         = (known after apply)
+      + content_sha256       = (known after apply)
+      + content_sha512       = (known after apply)
+      + directory_permission = "0777"
+      + file_permission      = "0644"
+      + filename             = "./.generated/kijanikiosk-api-b3a154810d85.yaml"
+      + id                   = (known after apply)
+    }
+
+  # module.app_server["api"].multipass_instance.this will be created
+  + resource "multipass_instance" "this" {
+      + cloudinit_file = "./.generated/kijanikiosk-api-b3a154810d85.yaml"
+      + cpus           = 1
+      + disk           = "5G"
+      + image          = "22.04"
+      + ipv4           = (known after apply)
+      + memory         = "512M"
+      + name           = "kijanikiosk-api"
+    }
+
+  # module.app_server["logs"].data.multipass_instance.this will be read during apply
+  # (depends on a resource or a module with changes pending)
+ <= data "multipass_instance" "this" {
+      + image      = (known after apply)
+      + image_hash = (known after apply)
+      + ipv4       = (known after apply)
+      + name       = "kijanikiosk-logs"
+      + state      = (known after apply)
+    }
+
+  # module.app_server["logs"].local_file.cloud_init will be created
+  + resource "local_file" "cloud_init" {
+      + content              = <<-EOT
+            #cloud-config
+            # Rendered by Terraform (module app_server). Runs once, at first boot.
+            
+            # Key pair: append our public key to the image's default user. Passwords stay off.
+            ssh_authorized_keys:
+              - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMoUuHOEZ5MNgJFA40ebhZi9KGGyyCdcvlbHM3R+qPSu kijanikiosk-staging
+            ssh_pwauth: false
+            disable_root: true
+            
+            write_files:
+              - path: /etc/kijanikiosk/node-labels
+                permissions: "0644"
+                content: |
+                  environment=staging
+                  instance_type=tiny
+                  managed_by=terraform
+                  region=ke-nairobi-local
+                  role=logs
+            
+            # Security-group equivalent: the host firewall is closed from first boot,
+            # before Ansible ever connects. Only SSH from admin networks is allowed.
+            runcmd:
+              - [ufw, allow, from, "172.16.0.0/12", to, any, port, "22", proto, tcp]
+              - [ufw, allow, from, "192.168.0.0/16", to, any, port, "22", proto, tcp]
+              - [ufw, allow, from, "10.0.0.0/8", to, any, port, "22", proto, tcp]
+              - [ufw, default, deny, incoming]
+              - [ufw, default, allow, outgoing]
+              - [ufw, --force, enable]
+        EOT
+      + content_base64sha256 = (known after apply)
+      + content_base64sha512 = (known after apply)
+      + content_md5          = (known after apply)
+      + content_sha1         = (known after apply)
+      + content_sha256       = (known after apply)
+      + content_sha512       = (known after apply)
+      + directory_permission = "0777"
+      + file_permission      = "0644"
+      + filename             = "./.generated/kijanikiosk-logs-f20fbb30ff8a.yaml"
+      + id                   = (known after apply)
+    }
+
+  # module.app_server["logs"].multipass_instance.this will be created
+  + resource "multipass_instance" "this" {
+      + cloudinit_file = "./.generated/kijanikiosk-logs-f20fbb30ff8a.yaml"
+      + cpus           = 1
+      + disk           = "5G"
+      + image          = "22.04"
+      + ipv4           = (known after apply)
+      + memory         = "512M"
+      + name           = "kijanikiosk-logs"
+    }
+
+  # module.app_server["payments"].data.multipass_instance.this will be read during apply
+  # (depends on a resource or a module with changes pending)
+ <= data "multipass_instance" "this" {
+      + image      = (known after apply)
+      + image_hash = (known after apply)
+      + ipv4       = (known after apply)
+      + name       = "kijanikiosk-payments"
+      + state      = (known after apply)
+    }
+
+  # module.app_server["payments"].local_file.cloud_init will be created
+  + resource "local_file" "cloud_init" {
+      + content              = <<-EOT
+            #cloud-config
+            # Rendered by Terraform (module app_server). Runs once, at first boot.
+            
+            # Key pair: append our public key to the image's default user. Passwords stay off.
+            ssh_authorized_keys:
+              - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMoUuHOEZ5MNgJFA40ebhZi9KGGyyCdcvlbHM3R+qPSu kijanikiosk-staging
+            ssh_pwauth: false
+            disable_root: true
+            
+            write_files:
+              - path: /etc/kijanikiosk/node-labels
+                permissions: "0644"
+                content: |
+                  environment=staging
+                  instance_type=tiny
+                  managed_by=terraform
+                  region=ke-nairobi-local
+                  role=payments
+            
+            # Security-group equivalent: the host firewall is closed from first boot,
+            # before Ansible ever connects. Only SSH from admin networks is allowed.
+            runcmd:
+              - [ufw, allow, from, "172.16.0.0/12", to, any, port, "22", proto, tcp]
+              - [ufw, allow, from, "192.168.0.0/16", to, any, port, "22", proto, tcp]
+              - [ufw, allow, from, "10.0.0.0/8", to, any, port, "22", proto, tcp]
+              - [ufw, default, deny, incoming]
+              - [ufw, default, allow, outgoing]
+              - [ufw, --force, enable]
+        EOT
+      + content_base64sha256 = (known after apply)
+      + content_base64sha512 = (known after apply)
+      + content_md5          = (known after apply)
+      + content_sha1         = (known after apply)
+      + content_sha256       = (known after apply)
+      + content_sha512       = (known after apply)
+      + directory_permission = "0777"
+      + file_permission      = "0644"
+      + filename             = "./.generated/kijanikiosk-payments-8a4e4650e8af.yaml"
+      + id                   = (known after apply)
+    }
+
+  # module.app_server["payments"].multipass_instance.this will be created
+  + resource "multipass_instance" "this" {
+      + cloudinit_file = "./.generated/kijanikiosk-payments-8a4e4650e8af.yaml"
+      + cpus           = 1
+      + disk           = "5G"
+      + image          = "22.04"
+      + ipv4           = (known after apply)
+      + memory         = "512M"
+      + name           = "kijanikiosk-payments"
+    }
+
+Plan: 6 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + ansible_inventory  = (known after apply)
+  + api_server_ip      = (known after apply)
+  + image_hashes       = {
+      + api      = (known after apply)
+      + logs     = (known after apply)
+      + payments = (known after apply)
+    }
+  + logs_server_ip     = (known after apply)
+  + payments_server_ip = (known after apply)
+  + server_ips         = {
+      + api      = (known after apply)
+      + logs     = (known after apply)
+      + payments = (known after apply)
+    }
+  + ssh_commands       = {
+      + api      = (known after apply)
+      + logs     = (known after apply)
+      + payments = (known after apply)
+    }
+[2026-10-21T15:30:01+0300] Terraform plan has changes - applying the saved plan
+module.app_server["api"].local_file.cloud_init: Creating...
+module.app_server["api"].local_file.cloud_init: Creation complete after 0s [id=9e7cd8f71f5f21de9da78e67ba6ec244b5a428b6]
+module.app_server["payments"].local_file.cloud_init: Creating...
+module.app_server["payments"].local_file.cloud_init: Creation complete after 0s [id=b732aa8a43b7c60d260ab481f48ef4fe656659c7]
+module.app_server["logs"].local_file.cloud_init: Creating...
+module.app_server["logs"].local_file.cloud_init: Creation complete after 0s [id=a9c06c2ad9f970b854fb3c5e140d6aa1603d1711]
+module.app_server["payments"].multipass_instance.this: Creating...
+module.app_server["payments"].multipass_instance.this: Still creating... [00m10s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [00m20s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [00m30s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [00m40s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [00m50s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [01m00s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [01m12s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [01m20s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [01m31s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [01m42s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [01m52s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [02m02s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [02m12s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [02m22s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [02m32s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [02m42s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [02m52s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [03m02s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [03m12s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [03m22s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [03m32s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [03m42s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [03m52s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [04m02s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [04m12s elapsed]
+module.app_server["payments"].multipass_instance.this: Still creating... [04m22s elapsed]
+module.app_server["logs"].multipass_instance.this: Creating...
+module.app_server["logs"].multipass_instance.this: Still creating... [00m10s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [00m20s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [00m30s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [00m40s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [00m50s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [01m00s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [01m10s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [01m20s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [01m30s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [01m40s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [01m50s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [02m00s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [02m10s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [02m20s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [02m30s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [02m40s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [02m50s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [03m00s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [03m10s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [03m20s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [03m30s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [03m40s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [03m50s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [04m00s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [04m10s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [04m20s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [04m30s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [04m40s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [04m50s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [05m00s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [05m10s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [05m20s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [05m30s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [05m40s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [05m50s elapsed]
+module.app_server["logs"].multipass_instance.this: Still creating... [06m00s elapsed]
+module.app_server["api"].multipass_instance.this: Creating...
+module.app_server["api"].multipass_instance.this: Still creating... [00m10s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [00m21s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [00m31s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [00m41s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [00m51s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [01m01s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [01m11s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [01m21s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [01m31s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [01m41s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [01m51s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [02m01s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [02m11s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [02m21s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [02m31s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [02m41s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [02m51s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [03m01s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [03m11s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [03m21s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [03m31s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [03m41s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [03m51s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [04m01s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [04m11s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [04m21s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [04m31s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [04m41s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [04m51s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [05m01s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [05m11s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [05m22s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [05m32s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [05m42s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [05m52s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [06m02s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [06m12s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [06m22s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [06m32s elapsed]
+module.app_server["api"].multipass_instance.this: Still creating... [06m42s elapsed]
+
+Error: Error from multipass
+
+  with module.app_server["api"].multipass_instance.this,
+  on modules/app_server/main.tf line 21, in resource "multipass_instance" "this":
+  21: resource "multipass_instance" "this" {
+
+Could not create instance, unexpected error: info failed: The following
+errors occurred:
+instance "kijanikiosk-api in zone1" does not exist
+ exit status 2
+
+Error: Error from multipass
+
+  with module.app_server["payments"].multipass_instance.this,
+  on modules/app_server/main.tf line 21, in resource "multipass_instance" "this":
+  21: resource "multipass_instance" "this" {
+
+Could not create instance, unexpected error: info failed: The following
+errors occurred:
+instance "kijanikiosk-payments in zone1" does not exist
+ exit status 2
+
+Error: Error from multipass
+
+  with module.app_server["logs"].multipass_instance.this,
+  on modules/app_server/main.tf line 21, in resource "multipass_instance" "this":
+  21: resource "multipass_instance" "this" {
+
+Could not create instance, unexpected error: info failed: The following
+errors occurred:
+instance "kijanikiosk-logs in zone1" does not exist
+ exit status 2
+[2026-10-21T15:47:29+0300] PIPELINE FAILED (exit 1) at line 50: terraform -chdir="$TF_DIR" "$@"

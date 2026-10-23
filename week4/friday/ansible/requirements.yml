@@ -1,0 +1,6 @@
+---
+collections:
+  - name: community.general # ufw module
+    version: ">=8.0.0"
+  - name: ansible.posix # acl module
+    version: ">=1.5.0"

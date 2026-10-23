@@ -1,0 +1,11 @@
+Fault commit: a030bc9 test(fault-4): add lodash 4.17.20 with known high-severity advisories (Security Audit fault)
+Build #11: FAILED in 103s
+  Declarative: Checkout SCM    SUCCESS         1.2s
+  Lint                         SUCCESS         7.0s
+  Build                        SUCCESS         1.7s
+  Verify                       SUCCESS         0.4s
+  Test                         SUCCESS         2.1s
+  Security Audit               FAILED          4.5s
+  Archive                      FAILED          0.4s
+  Publish                      FAILED          0.1s
+  Declarative: Post Actions    SUCCESS        18.7s

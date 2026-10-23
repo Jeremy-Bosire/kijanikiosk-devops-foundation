@@ -1,0 +1,20 @@
+kk-api:x:999:1001::/home/kk-api:/bin/false
+kijanikiosk:x:1001:
+total 20
+drwxr-xr-x 5 root root 4096 Sep 29 11:48 .
+drwxr-xr-x 3 root root 4096 Sep 28 14:24 ..
+drwxr-xr-x 2 root root 4096 Sep 28 14:24 app
+drwxrwxrwx 2 root root 4096 Sep 29 11:48 config
+drwxr-xr-x 3 root root 4096 Sep 29 11:48 shared
+Status: active
+
+     To                         Action      From
+     --                         ------      ----
+[ 1] 22/tcp                     ALLOW IN    Anywhere                  
+[ 2] 3001/tcp                   DENY IN     Anywhere                  
+[ 3] 22/tcp (v6)                ALLOW IN    Anywhere (v6)             
+[ 4] 3001/tcp (v6)              DENY IN     Anywhere (v6)             
+
+nginx
+4.0K	/opt/kijanikiosk/shared/logs/
+Archived and active journals take up 32M in the file system.

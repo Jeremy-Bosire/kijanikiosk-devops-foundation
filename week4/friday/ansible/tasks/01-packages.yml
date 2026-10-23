@@ -1,0 +1,14 @@
+---
+- name: Install common and host-specific packages
+  ansible.builtin.apt:
+    name: "{{ common_packages + extra_packages }}"
+    state: present
+    update_cache: true
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+    lock_timeout: 300
+
+- name: Hold packages whose version must not drift (Week 3 nginx hold)
+  ansible.builtin.dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  loop: "{{ held_packages }}"

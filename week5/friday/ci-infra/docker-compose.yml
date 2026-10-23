@@ -1,0 +1,66 @@
+# KijaniKiosk CI stack: Jenkins controller + Nexus registry on one private network.
+#
+# Secrets are read from files OUTSIDE the repository (created by init-secrets.sh)
+# and mounted as Docker secrets, so they never enter git, image layers, or the
+# Jenkins process environment that builds inherit.
+#
+#   ./init-secrets.sh
+#   docker compose up -d --build
+#   ./nexus/bootstrap-nexus.sh
+
+name: kijanikiosk-ci
+
+networks:
+  kk-ci:
+    name: kk-ci   # fixed name: the Jenkinsfile's Docker agent joins this network to reach Nexus
+
+volumes:
+  jenkins_home:
+  nexus_data:
+
+secrets:
+  jenkins_admin_password:
+    file: ${HOME}/.kijanikiosk-ci/jenkins_admin_password
+  nexus_publisher_password:
+    file: ${HOME}/.kijanikiosk-ci/nexus_publisher_password
+
+services:
+  nexus:
+    image: sonatype/nexus3:3.97.2
+    container_name: kk-nexus
+    networks: [kk-ci]
+    ports:
+      - "127.0.0.1:8081:8081"
+    environment:
+      # Sized for a 4 GB WSL VM that also hosts Jenkins and the build containers.
+      INSTALL4J_ADD_VM_PARAMS: "-Xms512m -Xmx768m -XX:MaxDirectMemorySize=512m -Djava.util.prefs.userRoot=/nexus-data/javaprefs"
+    volumes:
+      - nexus_data:/nexus-data
+    restart: unless-stopped
+
+  jenkins:
+    build: ./jenkins
+    image: kijanikiosk/jenkins:2.580.1
+    container_name: kk-jenkins
+    networks: [kk-ci]
+    ports:
+      - "127.0.0.1:8080:8080"
+    group_add:
+      - "1002"   # gid owning /var/run/docker.sock on this host, lets Jenkins start agent containers
+    environment:
+      CASC_JENKINS_CONFIG: /casc/casc.yaml
+      JAVA_OPTS: >-
+        -Xmx512m
+        -Djenkins.install.runSetupWizard=false
+        -Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true
+    secrets:
+      - jenkins_admin_password
+      - nexus_publisher_password
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./jenkins/casc.yaml:/casc/casc.yaml:ro
+      # The repository itself is the SCM source (file:///repo), read-only.
+      - ../../..:/repo:ro
+    depends_on: [nexus]
+    restart: unless-stopped

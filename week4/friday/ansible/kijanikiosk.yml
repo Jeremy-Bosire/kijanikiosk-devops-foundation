@@ -1,0 +1,79 @@
+---
+# KijaniKiosk staging: blank Ubuntu 22.04 -> Week 3 standard, on every server.
+# Phases mirror the Week 3 provisioning script. Every task uses an idempotent
+# module; the only command tasks are read-only checks with changed_when: false.
+- name: Configure KijaniKiosk servers to the Week 3 standard
+  hosts: kijanikiosk
+  become: true
+  gather_facts: false
+
+  pre_tasks:
+    - name: Wait for SSH to answer (fresh VMs may still be booting)
+      ansible.builtin.wait_for_connection:
+        timeout: 300
+
+    - name: Wait for first-boot cloud-init to finish (it owns apt and ufw until then)
+      ansible.builtin.command: cloud-init status --wait
+      register: cloud_init_status
+      changed_when: false
+      failed_when: cloud_init_status.rc not in [0, 2] # 2 = finished with warnings
+
+    - name: Gather facts
+      ansible.builtin.setup:
+
+  tasks:
+    - name: Phase 1 - packages
+      ansible.builtin.import_tasks: tasks/01-packages.yml
+      tags: [packages]
+
+    - name: Phase 2 - service accounts
+      ansible.builtin.import_tasks: tasks/02-accounts.yml
+      tags: [accounts]
+
+    - name: Phase 3 - directory structure
+      ansible.builtin.import_tasks: tasks/03-directories.yml
+      tags: [directories]
+
+    - name: Phase 4 - systemd unit files
+      ansible.builtin.import_tasks: tasks/04-systemd.yml
+      tags: [systemd]
+
+    - name: Phase 5 - firewall rules and SSH access
+      ansible.builtin.import_tasks: tasks/05-firewall.yml
+      tags: [firewall]
+
+    - name: Phase 6 - journal persistence
+      ansible.builtin.import_tasks: tasks/06-journald.yml
+      tags: [journald]
+
+    - name: Phase 7 - logrotate
+      ansible.builtin.import_tasks: tasks/07-logrotate.yml
+      tags: [logrotate]
+
+    - name: Run any pending handlers before verification
+      ansible.builtin.meta: flush_handlers
+
+    - name: Verify - service health, Challenge D, security score
+      ansible.builtin.import_tasks: tasks/08-verify.yml
+      tags: [verify]
+
+  handlers:
+    # Order matters: handlers run in the order they are defined here.
+    - name: Reload systemd
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+
+    - name: Restart kk service
+      ansible.builtin.systemd_service:
+        name: "{{ kk_service.name }}"
+        state: restarted
+
+    - name: Restart journald
+      ansible.builtin.systemd_service:
+        name: systemd-journald
+        state: restarted
+
+    - name: Reload ssh
+      ansible.builtin.systemd_service:
+        name: ssh
+        state: reloaded

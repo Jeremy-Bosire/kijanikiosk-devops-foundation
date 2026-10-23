@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+# Loaded before the image's own drop-ins, so these values win.
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin no
+PubkeyAuthentication yes
+AllowUsers {{ ansible_user }}
+MaxAuthTries 3
+X11Forwarding no
+LoginGraceTime 30

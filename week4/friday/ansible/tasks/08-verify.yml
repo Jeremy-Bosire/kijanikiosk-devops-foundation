@@ -1,0 +1,59 @@
+---
+# Read-only checks. None of these change the server, so they never count
+# towards changed= in the PLAY RECAP.
+
+# Integration Challenge D: the service account must be able to read its own
+# config even though ProtectSystem=strict is on.
+- name: Check the service account can read its environment file
+  ansible.builtin.stat:
+    path: "{{ kk_env_file }}"
+  become: true
+  become_user: "{{ kk_service.name }}"
+  vars:
+    ansible_remote_tmp: /tmp # service account has no home directory
+  register: env_file_stat
+
+- name: Assert environment file is readable by the service account
+  ansible.builtin.assert:
+    that:
+      - env_file_stat.stat.exists
+      - env_file_stat.stat.readable
+    fail_msg: "{{ kk_service.name }} cannot read {{ kk_env_file }} - check path and 0640 root:{{ kk_group }}"
+    success_msg: "{{ kk_service.name }} can read {{ kk_env_file }}"
+
+- name: Check the service answers on /health from inside the sandbox
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ kk_service.port }}/health"
+    return_content: true
+  register: health
+  retries: 10
+  delay: 3
+  until: health.status == 200
+
+- name: Assert the running service could read its config and write its log dir
+  ansible.builtin.assert:
+    that:
+      - health.json.config_readable
+      - health.json.log_writable
+    success_msg: "{{ health.json | to_json }}"
+
+- name: Score the unit with systemd-analyze security
+  ansible.builtin.command: "systemd-analyze security {{ kk_service.name }}.service --no-pager"
+  register: security_report
+  changed_when: false
+
+- name: Extract the overall exposure score
+  ansible.builtin.set_fact:
+    kk_exposure: "{{ security_report.stdout | regex_search('Overall exposure level for \\S+: ([0-9.]+)', '\\1') | first | float }}"
+
+- name: Report exposure score
+  ansible.builtin.debug:
+    msg: "{{ kk_service.name }} ({{ kk_service.hardening }} profile) systemd-analyze security exposure = {{ kk_exposure }}"
+
+- name: Enforce the score ceiling on strict-profile services (kk-payments < 2.5)
+  ansible.builtin.assert:
+    that:
+      - kk_exposure | float < kk_max_exposure_strict | float
+    fail_msg: "{{ kk_service.name }} scored {{ kk_exposure }}; must be below {{ kk_max_exposure_strict }}"
+    success_msg: "{{ kk_service.name }} scored {{ kk_exposure }} (< {{ kk_max_exposure_strict }})"
+  when: kk_service.hardening == 'strict'

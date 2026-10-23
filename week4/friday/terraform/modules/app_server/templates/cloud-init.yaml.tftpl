@@ -1,0 +1,26 @@
+#cloud-config
+# Rendered by Terraform (module app_server). Runs once, at first boot.
+
+# Key pair: append our public key to the image's default user. Passwords stay off.
+ssh_authorized_keys:
+  - ${ssh_public_key}
+ssh_pwauth: false
+disable_root: true
+
+write_files:
+  - path: /etc/kijanikiosk/node-labels
+    permissions: "0644"
+    content: |
+%{ for k, v in labels ~}
+      ${k}=${v}
+%{ endfor ~}
+
+# Security-group equivalent: the host firewall is closed from first boot,
+# before Ansible ever connects. Only SSH from admin networks is allowed.
+runcmd:
+%{ for cidr in admin_cidrs ~}
+  - [ufw, allow, from, "${cidr}", to, any, port, "22", proto, tcp]
+%{ endfor ~}
+  - [ufw, default, deny, incoming]
+  - [ufw, default, allow, outgoing]
+  - [ufw, --force, enable]
