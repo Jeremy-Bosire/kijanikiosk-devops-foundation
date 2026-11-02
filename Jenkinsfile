@@ -54,7 +54,7 @@ pipeline {
                 script {
                     if (!env.GIT_COMMIT) {
                         error('Git checkout did not provide GIT_COMMIT')
-                        }
+                    }
 
                     env.GIT_SHORT_SHA = env.GIT_COMMIT.take(7)
 
@@ -107,7 +107,7 @@ pipeline {
                     steps {
                         dir(env.APP_DIR) {
                             sh 'npm run test:ci'
-                        }
+                    }
                     }
                 }
                 stage('Security Audit') {
@@ -115,7 +115,7 @@ pipeline {
                         dir(env.APP_DIR) {
                             // Fails on any high or critical advisory in the locked dependency tree.
                             sh 'npm audit --audit-level=high'
-                        }
+                    }
                     }
                 }
             }
