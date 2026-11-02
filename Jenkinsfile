@@ -46,13 +46,34 @@ pipeline {
         npm_config_fund      = 'false'
         CI                   = 'true'
         // <semver from package.json>-<first 7 chars of the commit>, e.g. 1.0.0-3f9a2c1
-        GIT_SHORT_SHA        = "${env.GIT_COMMIT.take(7)}"
-        BASE_VERSION         = sh(script: "node -p \"require('./${APP_DIR}/package.json').version\"", returnStdout: true).trim()
-        ARTIFACT_VERSION     = "${BASE_VERSION}-${GIT_SHORT_SHA}"
-        TARBALL              = "${PACKAGE_NAME}-${ARTIFACT_VERSION}.tgz"
     }
 
     stages {
+        stage('Initialize') {
+            steps {
+                script {
+                    if (!env.GIT_COMMIT) {
+                        error('Git checkout did not provide GIT_COMMIT')
+                        }
+
+                    env.GIT_SHORT_SHA = env.GIT_COMMIT.take(7)
+
+                    env.BASE_VERSION = sh(
+                        script: "node -p \"require('./${env.APP_DIR}/package.json').version\"",
+                        returnStdout: true
+                    ).trim()
+
+                    env.ARTIFACT_VERSION = "${env.BASE_VERSION}-${env.GIT_SHORT_SHA}"
+                    env.TARBALL = "${env.PACKAGE_NAME}-${env.ARTIFACT_VERSION}.tgz"
+
+                    echo "Commit: ${env.GIT_SHORT_SHA}"
+                    echo "Base version: ${env.BASE_VERSION}"
+                    echo "Artifact version: ${env.ARTIFACT_VERSION}"
+                    echo "Tarball: ${env.TARBALL}"
+                }
+            }
+        }
+
         stage('Lint') {
             // Fail fast: style and obvious-bug checks are the cheapest signal, so they run first.
             steps {

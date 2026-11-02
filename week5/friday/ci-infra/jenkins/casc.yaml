@@ -42,7 +42,7 @@ jobs:
             scm {
               git {
                 remote { url('file:///repo') }
-                branch('*/feature/week5-ci-pipeline')
+                branch('*/feature/deployment-pipeline')
               }
             }
             scriptPath('Jenkinsfile')
