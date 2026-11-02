@@ -168,20 +168,20 @@ pipeline {
 
     post {
         always {
-            junit testResults: "${APP_DIR}/reports/junit.xml", allowEmptyResults: true
+            junit testResults: "${env.APP_DIR}/reports/junit.xml", allowEmptyResults: true
             echo "Total pipeline runtime: ${currentBuild.durationString.replace(' and counting', '')}"
             cleanWs()
         }
         success {
-            echo "ARTIFACT PUBLISHED: ${PACKAGE_NAME}@${ARTIFACT_VERSION}"
-            echo "  Install : npm install ${PACKAGE_NAME}@${ARTIFACT_VERSION} --registry ${NEXUS_BROWSE_URL}/repository/${NEXUS_REPOSITORY}/"
-            echo "  Tarball : ${NEXUS_BROWSE_URL}/repository/${NEXUS_REPOSITORY}/${PACKAGE_NAME}/-/${TARBALL}"
-            echo "  Browse  : ${NEXUS_BROWSE_URL}/#browse/browse:${NEXUS_REPOSITORY}"
+            echo "ARTIFACT PUBLISHED: ${env.PACKAGE_NAME}@${env.ARTIFACT_VERSION}"
+            echo "  Install : npm install ${env.PACKAGE_NAME}@${env.ARTIFACT_VERSION} --registry ${env.NEXUS_BROWSE_URL}/repository/${env.NEXUS_REPOSITORY}/"
+            echo "  Tarball : ${env.NEXUS_BROWSE_URL}/repository/${env.NEXUS_REPOSITORY}/${env.PACKAGE_NAME}/-/${env.TARBALL}"
+            echo "  Browse  : ${env.NEXUS_BROWSE_URL}/#browse/browse:${env.NEXUS_REPOSITORY}"
         }
         failure {
             echo """FAILURE NOTIFICATION: ${env.JOB_NAME} #${env.BUILD_NUMBER} failed.
-  Commit  : ${env.GIT_COMMIT}
-  Version : ${env.ARTIFACT_VERSION} was NOT published
+  Commit  : ${env.GIT_COMMIT ?: 'not available'}
+  Version : ${env.ARTIFACT_VERSION ?: 'not calculated'} was NOT published
   Details : ${env.BUILD_URL}console"""
         }
         changed {

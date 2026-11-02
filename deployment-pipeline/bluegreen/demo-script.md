@@ -1,27 +1,19 @@
-# Demo script
+# KijaniKiosk Investor Demonstration Script
 
-[Stage direction: Demonstrate the blue and green environments on screen.]
+### 1. Introduction
+Welcome. Today, I will demonstrate how KijaniKiosk deploys application updates while maintaining service availability and recovering automatically from failures.
 
-Today we are showing two important protections: safe traffic change and automatic recovery. First, the current version continues to serve customers while the new version waits ready.
+### 2. Show the Two Environments
+We use two separate application environments, Blue and Green. Blue runs version 1.3.0, while Green runs version 1.4.0. This separation allows us to prepare and validate a new release without immediately interrupting the active application.
 
-[Stage direction: Trigger the deployment and show the traffic switch to the new version.]
+### 3. Demonstrate Deployment
+We switch production traffic from Blue to Green through our web proxy. The new version becomes active after its health check succeeds. We can verify that production is now serving version 1.4.0.
 
-A new release is prepared and receives its own health check before visitors are moved to it. Once the checks pass, traffic moves without interruption.
+### 4. Simulate a Failure
+Next, I will deliberately stop the Green application. Our monitoring process checks the production health endpoint every five seconds. Once it detects thirteen consecutive failures, it automatically initiates recovery.
 
-[Stage direction: Stop the new application service to create the controlled fault.]
+### 5. Demonstrate Automatic Recovery
+The system switches traffic back to Blue and verifies the application through the production proxy. In our controlled test, recovery took 65 seconds, meeting the requirement of less than 90 seconds.
 
-We now introduce a simple fault that represents the new version failing its health check. Nobody changes anything at the console.
-
-[Stage direction: The automated monitor detects the failure and switches traffic back.]
-
-The system notices repeated failures and starts recovery itself. The earlier version becomes the live version again before a person needs to respond.
-
-[Stage direction: Show the confirmed healthy version and the rollback evidence.]
-
-The rollback was confirmed in **ACTUAL_SECONDS seconds**, faster than ninety seconds and far faster than the four minutes the earlier manual process took.
-
-[Stage direction: Close by connecting the result to customer and board risk.]
-
-This means fewer failed payment requests, less interruption for customers, and an evidence trail showing exactly when recovery happened. The automatic result is the difference between hope and control.
-
-*Spoken content: 208 words; replace ACTUAL_SECONDS only after the live rollback evidence is recorded.*
+### 6. Conclusion
+This deployment approach reduces release risk, improves recovery, and gives the engineering team a repeatable way to deliver application updates with greater confidence. Thank you.

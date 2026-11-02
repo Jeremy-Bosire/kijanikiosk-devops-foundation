@@ -31,6 +31,7 @@ services:
     networks: [kk-ci]
     ports:
       - "127.0.0.1:8081:8081"
+      - "127.0.0.1:8082:8082"
     environment:
       # Sized for a 4 GB WSL VM that also hosts Jenkins and the build containers.
       INSTALL4J_ADD_VM_PARAMS: "-Xms512m -Xmx768m -XX:MaxDirectMemorySize=512m -Djava.util.prefs.userRoot=/nexus-data/javaprefs"
@@ -46,7 +47,7 @@ services:
     ports:
       - "127.0.0.1:8080:8080"
     group_add:
-      - "1002"   # gid owning /var/run/docker.sock on this host, lets Jenkins start agent containers
+      - "973"   # gid owning /var/run/docker.sock on this host, lets Jenkins start agent containers
     environment:
       CASC_JENKINS_CONFIG: /casc/casc.yaml
       JAVA_OPTS: >-

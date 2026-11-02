@@ -6,3 +6,40 @@ GITSHA=$(git rev-parse --short=7 HEAD)
 IMAGE="${REGISTRY}/kk-payments:${VERSION}-${GITSHA}"
 
 This script usage is provided by build-and-tag.sh. The exact registry value and push output must be added after credentials and a registry are available.
+
+LIVE REGISTRY VERIFICATION
+
+Registry:
+localhost:8082 (local Nexus Docker hosted registry)
+
+Image:
+localhost:8082/kk-payments:1.0.0-cf462db
+
+Build tag:
+VERSION=1.0.0
+GITSHA=cf462db
+
+Push:
+Command: docker push "$IMAGE"
+Result: SUCCESS
+Digest: sha256:dae8f57eafc51124b795d4406647104cf6dc2aab0ceb4edcc1c017175634059a
+
+Local image deletion:
+Command: docker image rm "$IMAGE"
+Result: SUCCESS
+The local versioned tag was untagged and its image deleted.
+
+Fresh registry pull:
+Command: docker pull "$IMAGE"
+Result: SUCCESS
+Status: Downloaded newer image for localhost:8082/kk-payments:1.0.0-cf462db
+
+Pulled image inspection:
+Image ID: sha256:dae8f57eafc51124b795d4406647104cf6dc2aab0ceb4edcc1c017175634059a
+Size: 108588064 bytes (approximately 109 MB)
+
+Verification:
+The image was pushed to the private registry, its local versioned tag was removed, and it was successfully pulled again from the registry. The pulled image ID matches the digest reported by the push.
+
+Credentials:
+No registry credentials are stored in this repository's deployment files.

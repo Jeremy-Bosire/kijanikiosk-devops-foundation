@@ -1,27 +1,111 @@
-# Post-incident review: wrong-environment deployment
+# KijaniKiosk Post-Incident Review
 
-## 1. Incident summary
-Nia requested a production demonstration, but the delivery pipeline ran against the wrong environment during the investor walkthrough and made staging unavailable for 48 seconds. The response restored normal service, but the event exposed a configuration gap that could place customer traffic at risk.
+## 1. Incident Summary and Impact
 
-## 2. Timeline
-- Walkthrough began: time not retained in the narrative; marked estimated at the start of the scheduled investor demonstration.
-- Pipeline triggered: estimated within one minute of the walkthrough beginning.
-- Wrong environment targeted: immediately after triggering, when the pipeline selected the staging path from unvalidated configuration.
-- Error detected: approximately 09:16, based on the narrative that errors appeared within one minute of the trigger; exact seconds unavailable.
-- Resolved: approximately 48 seconds after staging unavailability began, reconstructed from the recorded unavailability duration.
-- Normal service confirmed: immediately after the environment was corrected and the health response returned normally.
+**Incident:** Staging environment outage during an investor demonstration.
 
-## 3. Root cause
-The configuration gap allowed environment selection without proving that the requested target matched deployment evidence. Why was the wrong environment selected? Because a shared pipeline variable supplied an ambiguous target. Why was that variable ambiguous? Because no approved value set distinguished staging from production. Why was the pipeline allowed to use it? Because validation happened late and checked syntax rather than authorization. Why did validation not stop the run? Because no hard target-policy gate existed before deployment commands. The structural finding is that environment identity and release promotion were not enforced as separate, protected inputs.
+**Duration:** 48 seconds.
 
-## 4. Contributing factors
-The walkthrough pressure reduced review time, the pipeline reused configuration across environments, and operators lacked a visible confirmation of the selected target before traffic changed. The health check was useful after impact but did not prevent the initial routing mistake.
+**Environment:** KijaniKiosk staging environment.
 
-## 5. What went well
-The team detected the availability loss quickly, restored service within the recorded 48-second incident, and retained enough evidence to reconstruct the event and scope the resulting controls.
+**Severity:** Moderate.
 
-## 6. Action items
-1. **Owner: Release engineering lead — within 2 weeks:** Add a target allowlist that permits only named environments and reject configuration outside the allowlist before any deployment action.
-2. **Owner: Platform engineering lead — within 3 weeks:** Add a pre-deployment policy gate that compares the pipeline identity, environment, and artifact digest, returning the same explicit approval result for every promotion.
-3. **Owner: Site reliability lead — within 4 weeks:** Require a human-readable active-target confirmation and protected health evidence in the deployment record before accepting a traffic switch.
-4. **Owner: Engineering manager — within 30 days:** Add a rehearsed wrong-target drill to release qualification and require a clean rollback demonstration before production approval.
+**Impact:** The staging application became temporarily unavailable during the investor demonstration. This interrupted access to the application and affected the demonstration experience. The outage was resolved after service recovery.
+
+**Customer impact:** No production customer impact is established by the scenario. The incident was limited to staging.
+
+**Detection:** The outage was identified during the demonstration and required investigation and recovery.
+
+## 2. Incident Timeline
+
+The following timeline is reconstructed from the scenario. Exact timestamps were not provided.
+
+| Event | Time |
+|---|---|
+| Staging service became unavailable | T+00 seconds |
+| Outage identified | During the incident |
+| Recovery process initiated | During the incident |
+| Staging service restored | T+48 seconds |
+| Total outage duration | 48 seconds |
+
+The timestamps above are relative estimates, not verified system-log timestamps.
+
+## 3. Root Cause Analysis — Five Whys
+
+The following is a working root-cause hypothesis. Deployment logs and monitoring records should be reviewed before treating it as a confirmed technical cause.
+
+**Why 1: Why did the investor demonstration experience an interruption?**
+
+Because the staging application became temporarily unavailable.
+
+**Why 2: Why did the staging application become unavailable?**
+
+A deployment or service transition may have temporarily routed requests to an unhealthy or unavailable application instance.
+
+**Why 3: Why could traffic reach an unhealthy instance?**
+
+The deployment process may not have enforced sufficient health validation before making the new application instance available to users.
+
+**Why 4: Why was health validation insufficient?**
+
+The deployment process may have lacked a reliable automated mechanism for verifying application health through the actual production-facing proxy before completing a release.
+
+**Why 5: Why was this weakness not identified earlier?**
+
+Deployment testing and pre-demonstration operational checks may not have adequately covered unhealthy releases, traffic switching, and automatic recovery scenarios.
+
+**Root-cause hypothesis:** Insufficient deployment health validation and failure-recovery safeguards allowed a staging release transition to interrupt service availability.
+
+This hypothesis requires confirmation against the incident's deployment and application logs.
+
+## 4. Contributing Factors
+
+1. **Insufficient release validation:** The deployment process may not have fully verified application readiness before exposing the release to staging traffic.
+
+2. **Inadequate failure simulation:** The deployment process may not have been tested against unhealthy application instances and failed traffic transitions.
+
+3. **Monitoring limitations:** Health monitoring may not have detected or escalated the problem early enough to prevent the interruption.
+
+4. **Demonstration readiness:** The staging environment may not have received a complete pre-demonstration health and deployment-readiness check.
+
+## 5. Response and What Went Well
+
+The staging service was restored after a 48-second interruption.
+
+The incident highlighted the importance of deployment automation, health monitoring, and rollback procedures.
+
+The subsequent Blue-Green deployment work provides a stronger recovery mechanism:
+
+- Separate Blue and Green application environments.
+- Independent health checks for each release.
+- Nginx-based traffic switching.
+- Automated rollback following consecutive failed health checks.
+- Verification of the restored application through the production-facing proxy.
+
+A controlled rollback test subsequently demonstrated recovery in 65 seconds, below the required 90-second target.
+
+This later test demonstrates an improvement in the deployment process; it should not be interpreted as proof that the same mechanism was responsible for resolving the original 48-second incident.
+
+## 6. Corrective and Preventive Actions
+
+The following owners and timeframes are proposed estimates for the incident review.
+
+| Action | Owner | Estimated timeframe | Expected outcome |
+|---|---|---|---|
+| Implement automated health checks before and after every deployment | DevOps Engineer | 2 working days | Unhealthy releases are detected before receiving traffic |
+| Introduce automated rollback when deployment health checks fail | DevOps Engineer | 3 working days | Faster recovery from failed releases |
+| Add staging failure-injection tests to deployment validation | QA Engineer | 5 working days | Deployment failures are identified before demonstrations |
+| Establish pre-demonstration readiness checks and a deployment freeze | Release Manager | 2 working days | Reduces the risk of unplanned changes during demonstrations |
+| Monitor availability, error rates, and response latency | Monitoring Engineer | 5 working days | Improves detection and visibility of service degradation |
+
+### Follow-up and Review
+
+The engineering team should review the corrective actions after implementation and verify that:
+
+- Deployments cannot route traffic to unhealthy application instances.
+- Failed releases trigger automatic recovery.
+- Recovery is verified through the Nginx proxy.
+- Monitoring provides visibility into service availability and application errors.
+- Staging readiness is confirmed before important demonstrations.
+
+The objective is to prevent recurrence, reduce service interruptions, and improve confidence in the KijaniKiosk deployment process.

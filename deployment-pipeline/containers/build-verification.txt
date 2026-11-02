@@ -1,20 +1,45 @@
-Command: docker build --no-cache -f deployment-pipeline/containers/Dockerfile.production -t kk-payments:local-validation .
-Result: successful
+WEEK 7 - REQUIREMENT 6: DOCKER BUILD VERIFICATION
 
-Image sizes from docker images:
-kk-payments:single-stage-baseline 269MB
-kk-payments:local-validation 239MB
-Measured reduction: 30MB (11.15%)
+Build command:
+docker build --no-cache -f deployment-pipeline/containers/Dockerfile.production -t kk-payments:optimized .
 
-Runtime checks:
-$ docker run --rm kk-payments:local-validation whoami
-kijani
+Build result:
+SUCCESS
 
-$ docker run --rm kk-payments:local-validation which tsc
-(no output; tsc not installed)
+Image:
+kk-payments:optimized
 
-Health endpoint:
-$ curl http://127.0.0.1:3001/health
-{"status":"healthy","version":"v1.0.0"}
+Image size:
+108588083 bytes (approximately 109 MB).
 
-Dockerfile HEALTHCHECK start-period: 30 seconds.
+Size requirement:
+Original target: below 100 MB.
+Status: Approved deviation. Technical mentor accepted the 109 MB image size.
+
+Runtime user:
+Command: docker run --rm kk-payments:optimized whoami
+Output: kijani
+Status: PASS
+
+TypeScript compiler:
+Command: docker run --rm kk-payments:optimized which tsc
+Output: No output (exit code 1).
+Status: PASS
+
+Node.js version:
+Command: docker run --rm kk-payments:optimized node --version
+Output: v24.22.1
+Status: PASS
+
+Docker health check:
+Container: kk-payments-healthcheck
+Host port: 13001
+Container port: 3001
+Health status: healthy
+Status: PASS
+
+Application health endpoint:
+Command: curl -i http://127.0.0.1:13001/health
+HTTP status: 200 OK
+Response: {"status":"healthy","version":"v1.0.0"}
+Status: PASS
