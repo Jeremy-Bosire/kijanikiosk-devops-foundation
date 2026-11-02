@@ -1,0 +1,6 @@
+LIVE CLUSTER EVIDENCE PENDING: kubectl and Minikube access were not supplied.
+
+Required records:
+- kubectl get endpoints kk-payments-service
+- curl http://$(minikube ip):30001/health
+- in-cluster health response through kk-payments-service.default.svc.cluster.local:3001/health

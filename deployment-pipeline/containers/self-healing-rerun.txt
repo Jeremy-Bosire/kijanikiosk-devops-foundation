@@ -1,0 +1,3 @@
+LIVE CLUSTER EVIDENCE PENDING: kubectl and a reachable cluster were not supplied.
+
+Record T0 at pod deletion and T1 when the replacement reaches Running. Compute T1-T0 and do not substitute estimated values.

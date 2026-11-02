@@ -1,0 +1,13 @@
+LIVE EVIDENCE PENDING: no staging server address, SSH access, or credentials were supplied.
+
+T0: controlled fault introduction timestamp
+T1: [MONITOR FAIL] ROLLBACK TRIGGERED timestamp
+T2: blue healthy through proxy timestamp
+T0-to-T2 duration: PENDING seconds (must be below 90)
+
+Post-rollback curl result: expected v1.3.0
+Expected state files:
+active-env = blue
+previous-env = green
+
+No fabricated timestamps are included.

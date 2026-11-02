@@ -1,0 +1,20 @@
+Command: docker build --no-cache -f deployment-pipeline/containers/Dockerfile.production -t kk-payments:local-validation .
+Result: successful
+
+Image sizes from docker images:
+kk-payments:single-stage-baseline 269MB
+kk-payments:local-validation 239MB
+Measured reduction: 30MB (11.15%)
+
+Runtime checks:
+$ docker run --rm kk-payments:local-validation whoami
+kijani
+
+$ docker run --rm kk-payments:local-validation which tsc
+(no output; tsc not installed)
+
+Health endpoint:
+$ curl http://127.0.0.1:3001/health
+{"status":"healthy","version":"v1.0.0"}
+
+Dockerfile HEALTHCHECK start-period: 30 seconds.

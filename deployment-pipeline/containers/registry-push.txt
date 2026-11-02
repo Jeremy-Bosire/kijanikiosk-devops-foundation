@@ -1,0 +1,8 @@
+LIVE REGISTRY EVIDENCE PENDING: REGISTRY was not supplied.
+
+Required computation at build time:
+VERSION=$(node -p "require('./kijanikiosk-payments/package.json').version")
+GITSHA=$(git rev-parse --short=7 HEAD)
+IMAGE="${REGISTRY}/kk-payments:${VERSION}-${GITSHA}"
+
+This script usage is provided by build-and-tag.sh. The exact registry value and push output must be added after credentials and a registry are available.

@@ -1,0 +1,5 @@
+LIVE CLUSTER EVIDENCE PENDING: kubectl and a reachable cluster were not supplied.
+
+Required records:
+- kubectl get pods -l app=kk-payments showing two READY 2/2 pods
+- kubectl get deployment kk-payments showing AVAILABLE 2

@@ -9,6 +9,7 @@
   "scripts": {
     "lint": "eslint .",
     "build": "node scripts/build.js",
+    "start": "node dist/server.js",
     "test": "node --test test/*.test.js",
     "test:ci": "mkdir -p reports && node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=reports/junit.xml test/*.test.js"
   },
