@@ -46,13 +46,34 @@ pipeline {
         npm_config_fund      = 'false'
         CI                   = 'true'
         // <semver from package.json>-<first 7 chars of the commit>, e.g. 1.0.0-3f9a2c1
-        GIT_SHORT_SHA        = "${env.GIT_COMMIT.take(7)}"
-        BASE_VERSION         = sh(script: "node -p \"require('./${APP_DIR}/package.json').version\"", returnStdout: true).trim()
-        ARTIFACT_VERSION     = "${BASE_VERSION}-${GIT_SHORT_SHA}"
-        TARBALL              = "${PACKAGE_NAME}-${ARTIFACT_VERSION}.tgz"
     }
 
     stages {
+        stage('Initialize') {
+            steps {
+                script {
+                    if (!env.GIT_COMMIT) {
+                        error('Git checkout did not provide GIT_COMMIT')
+                    }
+
+                    env.GIT_SHORT_SHA = env.GIT_COMMIT.take(7)
+
+                    env.BASE_VERSION = sh(
+                        script: "node -p \"require('./${env.APP_DIR}/package.json').version\"",
+                        returnStdout: true
+                    ).trim()
+
+                    env.ARTIFACT_VERSION = "${env.BASE_VERSION}-${env.GIT_SHORT_SHA}"
+                    env.TARBALL = "${env.PACKAGE_NAME}-${env.ARTIFACT_VERSION}.tgz"
+
+                    echo "Commit: ${env.GIT_SHORT_SHA}"
+                    echo "Base version: ${env.BASE_VERSION}"
+                    echo "Artifact version: ${env.ARTIFACT_VERSION}"
+                    echo "Tarball: ${env.TARBALL}"
+                }
+            }
+        }
+
         stage('Lint') {
             // Fail fast: style and obvious-bug checks are the cheapest signal, so they run first.
             steps {
@@ -86,7 +107,7 @@ pipeline {
                     steps {
                         dir(env.APP_DIR) {
                             sh 'npm run test:ci'
-                        }
+                    }
                     }
                 }
                 stage('Security Audit') {
@@ -94,7 +115,7 @@ pipeline {
                         dir(env.APP_DIR) {
                             // Fails on any high or critical advisory in the locked dependency tree.
                             sh 'npm audit --audit-level=high'
-                        }
+                    }
                     }
                 }
             }
@@ -147,20 +168,20 @@ pipeline {
 
     post {
         always {
-            junit testResults: "${APP_DIR}/reports/junit.xml", allowEmptyResults: true
+            junit testResults: "${env.APP_DIR}/reports/junit.xml", allowEmptyResults: true
             echo "Total pipeline runtime: ${currentBuild.durationString.replace(' and counting', '')}"
             cleanWs()
         }
         success {
-            echo "ARTIFACT PUBLISHED: ${PACKAGE_NAME}@${ARTIFACT_VERSION}"
-            echo "  Install : npm install ${PACKAGE_NAME}@${ARTIFACT_VERSION} --registry ${NEXUS_BROWSE_URL}/repository/${NEXUS_REPOSITORY}/"
-            echo "  Tarball : ${NEXUS_BROWSE_URL}/repository/${NEXUS_REPOSITORY}/${PACKAGE_NAME}/-/${TARBALL}"
-            echo "  Browse  : ${NEXUS_BROWSE_URL}/#browse/browse:${NEXUS_REPOSITORY}"
+            echo "ARTIFACT PUBLISHED: ${env.PACKAGE_NAME}@${env.ARTIFACT_VERSION}"
+            echo "  Install : npm install ${env.PACKAGE_NAME}@${env.ARTIFACT_VERSION} --registry ${env.NEXUS_BROWSE_URL}/repository/${env.NEXUS_REPOSITORY}/"
+            echo "  Tarball : ${env.NEXUS_BROWSE_URL}/repository/${env.NEXUS_REPOSITORY}/${env.PACKAGE_NAME}/-/${env.TARBALL}"
+            echo "  Browse  : ${env.NEXUS_BROWSE_URL}/#browse/browse:${env.NEXUS_REPOSITORY}"
         }
         failure {
             echo """FAILURE NOTIFICATION: ${env.JOB_NAME} #${env.BUILD_NUMBER} failed.
-  Commit  : ${env.GIT_COMMIT}
-  Version : ${env.ARTIFACT_VERSION} was NOT published
+  Commit  : ${env.GIT_COMMIT ?: 'not available'}
+  Version : ${env.ARTIFACT_VERSION ?: 'not calculated'} was NOT published
   Details : ${env.BUILD_URL}console"""
         }
         changed {

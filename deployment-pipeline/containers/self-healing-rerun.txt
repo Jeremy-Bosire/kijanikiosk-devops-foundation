@@ -1,0 +1,23 @@
+Kubernetes self-healing test
+Date: 2026-11-03T09:56:16+03:00
+Deployment: kk-payments
+Initial replicas:
+NAME                           READY   STATUS    RESTARTS   AGE
+kk-payments-7f7cb9bcc8-wffvm   1/1     Running   0          2m45s
+kk-payments-7f7cb9bcc8-zbmxv   1/1     Running   0          2m45s
+
+Deleting pod: kk-payments-7f7cb9bcc8-wffvm
+pod "kk-payments-7f7cb9bcc8-wffvm" deleted from default namespace
+Waiting for replacement pod to become Ready...
+
+Recovery successful: true
+Recovery time: 32 seconds
+
+Final deployment status:
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+kk-payments   2/2     2            2           20m
+
+Final pod status:
+NAME                           READY   STATUS    RESTARTS   AGE     IP           NODE       NOMINATED NODE   READINESS GATES
+kk-payments-7f7cb9bcc8-qcvzx   1/1     Running   0          32s     10.244.0.7   minikube   <none>           <none>
+kk-payments-7f7cb9bcc8-zbmxv   1/1     Running   0          3m17s   10.244.0.5   minikube   <none>           <none>

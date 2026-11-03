@@ -1,0 +1,11 @@
+LIVE EVIDENCE PENDING: no staging server address, SSH access, or credentials were supplied.
+
+Expected record below is generated during the live switch cycle and must not be edited with estimated values.
+
+[UTC_TIMESTAMP] Monitor started in separate terminal
+[UTC_TIMESTAMP] Pre-switch confirmation: blue active, green healthy on v1.4.0
+[UTC_TIMESTAMP] switch-env output
+[UTC_TIMESTAMP] nginx curl: {"status":"healthy","version":"v1.4.0"}
+[UTC_TIMESTAMP] active-env: green
+[UTC_TIMESTAMP] previous-env: blue
+[UTC_TIMESTAMP] active nginx upstream reference: kk-api-green
