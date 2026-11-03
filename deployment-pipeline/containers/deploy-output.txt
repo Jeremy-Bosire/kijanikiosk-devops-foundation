@@ -1,5 +1,5 @@
-LIVE CLUSTER EVIDENCE PENDING: kubectl and a reachable cluster were not supplied.
-
-Required records:
-- kubectl get pods -l app=kk-payments showing two READY 2/2 pods
-- kubectl get deployment kk-payments showing AVAILABLE 2
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS    IMAGES                                        SELECTOR
+kk-payments   2/2     2            2           18m   kk-payments   192.168.49.1:8082/kk-payments:1.0.0-cf462db   app=kk-payments
+NAME                           READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+kk-payments-7f7cb9bcc8-wffvm   1/1     Running   0          89s   10.244.0.6   minikube   <none>           <none>
+kk-payments-7f7cb9bcc8-zbmxv   1/1     Running   0          89s   10.244.0.5   minikube   <none>           <none>

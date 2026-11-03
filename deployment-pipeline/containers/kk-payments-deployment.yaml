@@ -18,7 +18,7 @@ spec:
         - name: kijani-registry-credentials
       containers:
         - name: kk-payments
-          image: REGISTRY/kk-payments:VERSION-GITSHA
+          image: 192.168.49.1:8082/kk-payments:1.0.0-cf462db
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

@@ -31,7 +31,7 @@ services:
     networks: [kk-ci]
     ports:
       - "127.0.0.1:8081:8081"
-      - "127.0.0.1:8082:8082"
+      - "192.168.49.1:8082:8082"
     environment:
       # Sized for a 4 GB WSL VM that also hosts Jenkins and the build containers.
       INSTALL4J_ADD_VM_PARAMS: "-Xms512m -Xmx768m -XX:MaxDirectMemorySize=512m -Djava.util.prefs.userRoot=/nexus-data/javaprefs"
